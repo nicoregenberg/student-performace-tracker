@@ -210,18 +210,18 @@ VALUES
     (123456, 1, 1), (789010, 1, 1), (789010, 1, 2),
     (111213, 2, 3), (141516, 2, 3), (171819, 2, 3), (171819, 2, 4);
 
-INSERT INTO leistung (fk_matnr, wert, fk_abgabe_in_kurs, abgabe_ist, frist_verlaengerung_tage, fk_team)
+INSERT INTO leistung (fk_matnr, wert, fk_abgabe_in_kurs, abgabe_ist, frist_verlaengerung_tage, fk_team, festgesetzt)
 VALUES
-    (123456, 1.0, 1, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1),
-    (123456, 2.0, 2, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1),
-    (123456, 1.5, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1),
-    (123456, 3.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null),
-    (123456, 3.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null),
-    (789010, 2.0, 1, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1),
-    (789010, 2.3, 2, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1),
-    (789010, 1.0, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1),
-    (789010, 2.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null),
-    (789010, 1.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null);
+    (123456, 1.0, 1, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
+    (123456, 2.0, 2, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
+    (123456, 1.5, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (123456, 3.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
+    (123456, 3.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
+    (789010, 2.0, 1, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
+    (789010, 2.3, 2, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
+    (789010, 1.0, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (789010, 2.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
+    (789010, 1.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false);
 
 
 

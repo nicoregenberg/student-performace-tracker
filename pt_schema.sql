@@ -151,6 +151,7 @@ create table performancetracker.leistung
 	wert decimal(3,2) not null,
 	abgabe_ist datetime null,
 	frist_verlaengerung_tage smallint null,
+	festgesetzt bool,
 	constraint leistung_team_id_fk
 		foreign key (fk_team) references performancetracker.team (id) on update cascade,
 	constraint leistung_abgabe_id_fk
