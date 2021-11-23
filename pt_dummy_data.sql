@@ -10,7 +10,11 @@ VALUES
     ('20', 'W'), ('20', 'S'),
     ('21', 'W'), ('21', 'S');
 
-INSERT INTO modul (fachbereich, modulnummer, beschreibung)
+INSERT INTO fachrichtung (bezeichnung)
+VALUES
+    ('WI'), ('BWL');
+
+INSERT INTO modul (fk_fachrichtung, modulnummer, beschreibung)
 VALUES
     ('WI', 103, null),
     ('WI', 602, 'Datenbanken'),
@@ -24,19 +28,6 @@ VALUES
     (3, 'Altenheim :-) '),
     (6, null),
     (2, 'Just married');
-
-INSERT INTO matrikelnummer (matnr)
-VALUES
-    (123456), (789010), (111213), (141516), (171819),
-    (202122), (232425), (262728), (293031), (323334),
-    (353637), (383940), (414243), (444546), (474849),
-    (505152), (535455), (565758), (596061), (616263);
-
-INSERT INTO student_in_team (fk_matnr, fk_team)
-VALUES
-    (123456, 1), (789010, 1), (111213, 1), (141516, 2), (171819, 2),
-    (123456, 2), (232425, 3), (262728, 3), (293031, 3), (171819, 3),
-    (123456, 3), (383940, 3), (414243, 4), (141516, 4);
 
 INSERT INTO person (mail, vorname, nachname)
 VALUES
@@ -75,7 +66,7 @@ VALUES
     ('doz.bugs.bunny@hwr.de'),
     ('doz.dorothy.gale@hwr.de');
 
-INSERT INTO student (fk_mail, studiengang, fk_matnr)
+INSERT INTO student (fk_mail, fk_fachrichtung, matnr)
 VALUES
     ('stud.darth.vader@hwr.de', 'WI', 262728),
     ('stud.indiana.jones@hwr.de', 'WI', 293031),
@@ -91,12 +82,18 @@ VALUES
     ('stud.cosmo.cramer@hwr.de', 'WI', 596061),
     ('stud.ellen.ripley@hwr.de', 'WI', 616263),
     ('stud.marge.simpson@hwr.de', 'BWL', 789010),
-    ('stud.mutti@hwr.de', 'Angela', 111213),
+    ('stud.mutti@hwr.de', 'BWL', 111213),
     ('stud.captain.america@hwr.de', 'BWL', 123456),
     ('stud.greta.thunberg@hwr.de', 'BWL', 141516),
     ('stud.fauler.sack@hwr.de', 'BWL', 171819),
     ('stud.super.streber@hwr.de', 'BWL', 202122),
     ('stud.über.schätzt@hwr.de', 'BWL', 232425);
+
+INSERT INTO student_in_team (fk_matnr, fk_team)
+VALUES
+    (123456, 1), (789010, 1), (111213, 1), (141516, 2), (171819, 2),
+    (123456, 2), (232425, 3), (262728, 3), (293031, 3), (171819, 3),
+    (123456, 3), (383940, 3), (414243, 4), (141516, 4);
 
 INSERT INTO zugriffsrecht (abkuerzung, beschreibung)
 VALUES
