@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS performancetracker;
 USE performancetracker;
 
-create table performancetracker.aktive_mitarbeit
+create table aktive_mitarbeit
 (
 	id int auto_increment
 		primary key,
@@ -10,13 +10,13 @@ create table performancetracker.aktive_mitarbeit
 	bezeichnung char(255) null
 );
 
-create table performancetracker.fachrichtung
+create table fachrichtung
 (
 	bezeichnung char(10) not null
 	    primary key
 );
 
-create table performancetracker.jahrgang
+create table jahrgang
 (
 	id int auto_increment
 		primary key,
@@ -24,19 +24,19 @@ create table performancetracker.jahrgang
 	sem_so_wi char not null
 );
 
-create table performancetracker.kurs_buchstabe
+create table kurs_buchstabe
 (
 	wert char(1) not null
 		primary key
 );
 
-create table performancetracker.leistungstyp
+create table leistungstyp
 (
 	bezeichnung char(30) not null
 		primary key
 );
 
-create table performancetracker.leistung_template
+create table leistung_template
 (
 	id int auto_increment
 		primary key,
@@ -45,10 +45,10 @@ create table performancetracker.leistung_template
 	gewichtung decimal(3,2) null,
 	teiler smallint not null,
 	constraint leistung_template_leistungstyp_bezeichnung_fk
-		foreign key (fk_leistungstyp) references performancetracker.leistungstyp (bezeichnung) on delete cascade on update cascade
+		foreign key (fk_leistungstyp) references leistungstyp (bezeichnung) on delete cascade on update cascade
 );
 
-create table performancetracker.modul
+create table modul
 (
 	id int auto_increment
 		primary key,
@@ -56,10 +56,10 @@ create table performancetracker.modul
 	modulnummer int(3) not null,
 	beschreibung char(255) null,
 	constraint modul_fachrichtung_fk
-		foreign key (fk_fachrichtung) references performancetracker.fachrichtung (bezeichnung) on delete cascade on update cascade
+		foreign key (fk_fachrichtung) references fachrichtung (bezeichnung) on delete cascade on update cascade
 );
 
-create table performancetracker.kurs
+create table kurs
 (
 	id int auto_increment
 		primary key,
@@ -69,14 +69,14 @@ create table performancetracker.kurs
 	fk_modul int not null,
 	latedays_verfuegbar smallint null,
 	constraint kurs_ibfk_1
-		foreign key (fk_jahrgang) references performancetracker.jahrgang (id) on delete cascade on update cascade,
+		foreign key (fk_jahrgang) references jahrgang (id) on delete cascade on update cascade,
 	constraint kurs_ibfk_2
-		foreign key (fk_kurs_buchstabe) references performancetracker.kurs_buchstabe (wert) on delete cascade on update cascade,
+		foreign key (fk_kurs_buchstabe) references kurs_buchstabe (wert) on delete cascade on update cascade,
 	constraint kurs_ibfk_3
-		foreign key (fk_modul) references performancetracker.modul (id) on delete cascade on update cascade
+		foreign key (fk_modul) references modul (id) on delete cascade on update cascade
 );
 
-create table performancetracker.abgabe_in_kurs
+create table abgabe_in_kurs
 (
 	id int auto_increment
 		primary key,
@@ -85,12 +85,12 @@ create table performancetracker.abgabe_in_kurs
 	fk_leistung_template int not null,
 	fk_kurs int not null,
 	constraint abgabe_kurs_id_fk
-		foreign key (fk_kurs) references performancetracker.kurs (id) on delete cascade on update cascade,
+		foreign key (fk_kurs) references kurs (id) on delete cascade on update cascade,
 	constraint abgabe_leistung_template_id_fk
-		foreign key (fk_leistung_template) references performancetracker.leistung_template (id) on delete cascade on update cascade
+		foreign key (fk_leistung_template) references leistung_template (id) on delete cascade on update cascade
 );
 
-create table performancetracker.person
+create table person
 (
 	mail char(50) not null
 		primary key,
@@ -99,41 +99,41 @@ create table performancetracker.person
 );
 
 
-create table performancetracker.student
+create table student
 (
 	fk_mail char(50) not null ,
 	matnr int not null primary key,
 	fk_fachrichtung char(30) not null,
 	constraint student_person_mail_fk
-		foreign key (fk_mail) references performancetracker.person (mail) on delete cascade on update cascade,
+		foreign key (fk_mail) references person (mail) on delete cascade on update cascade,
 	constraint student_fachrichtung_fk
-		foreign key (fk_fachrichtung) references performancetracker.fachrichtung (bezeichnung) on delete cascade on update cascade
+		foreign key (fk_fachrichtung) references fachrichtung (bezeichnung) on delete cascade on update cascade
 );
 
-create table performancetracker.aktive_mitarbeit_in_kurs
+create table aktive_mitarbeit_in_kurs
 (
 	fk_matnr int not null,
 	fk_kurs int not null,
 	fk_aktive_mitarbeit int not null,
 	constraint aktive_mitarbeit_in_kurs_ibfk_1
-		foreign key (fk_matnr) references performancetracker.student (matnr) on delete cascade on update cascade,
+		foreign key (fk_matnr) references student (matnr) on delete cascade on update cascade,
 	constraint aktive_mitarbeit_in_kurs_ibfk_2
-		foreign key (fk_kurs) references performancetracker.kurs (id) on delete cascade on update cascade,
+		foreign key (fk_kurs) references kurs (id) on delete cascade on update cascade,
 	constraint aktive_mitarbeit_in_kurs_ibfk_3
-		foreign key (fk_aktive_mitarbeit) references performancetracker.aktive_mitarbeit (id) on delete cascade on update cascade
+		foreign key (fk_aktive_mitarbeit) references aktive_mitarbeit (id) on delete cascade on update cascade
 );
 
-create table performancetracker.anfrageaufnahme
+create table anfrageaufnahme
 (
 	fk_kurs int not null,
 	fk_matnr int not null,
 	constraint anfrageaufnahme_ibfk_1
-		foreign key (fk_kurs) references performancetracker.kurs (id) on delete cascade on update cascade,
+		foreign key (fk_kurs) references kurs (id) on delete cascade on update cascade,
 	constraint anfrageaufnahme_ibfk_2
-		foreign key (fk_matnr) references performancetracker.student (matnr) on delete cascade on update cascade
+		foreign key (fk_matnr) references student (matnr) on delete cascade on update cascade
 );
 
-create table performancetracker.team
+create table team
 (
 	id int auto_increment
 		primary key,
@@ -141,7 +141,7 @@ create table performancetracker.team
 	kommentar char(255) null
 );
 
-create table performancetracker.leistung
+create table leistung
 (
 	id int auto_increment
 		primary key,
@@ -153,40 +153,40 @@ create table performancetracker.leistung
 	frist_verlaengerung_tage smallint null,
 	festgesetzt bool,
 	constraint leistung_team_id_fk
-		foreign key (fk_team) references performancetracker.team (id) on update cascade,
+		foreign key (fk_team) references team (id) on update cascade,
 	constraint leistung_abgabe_id_fk
-		foreign key (fk_abgabe_in_kurs) references performancetracker.abgabe_in_kurs (id) on delete cascade on update cascade,
+		foreign key (fk_abgabe_in_kurs) references abgabe_in_kurs (id) on delete cascade on update cascade,
 	constraint leistung_matrikelnummer_von_student_matrikelnummer_fk
-		foreign key (fk_matnr) references performancetracker.student (matnr) on delete cascade on update cascade
+		foreign key (fk_matnr) references student (matnr) on delete cascade on update cascade
 );
 
-create table performancetracker.account
+create table account
 (
 	fk_mail char(50) not null,
 	password_hash char(255) not null,
 	constraint account_person_mail_fk
-		foreign key (fk_mail) references performancetracker.person (mail)
+		foreign key (fk_mail) references person (mail)
 );
 
-create table performancetracker.dozent
+create table dozent
 (
 	fk_person char(50) not null
 		primary key,
 	constraint dozent_person_mail_fk
-		foreign key (fk_person) references performancetracker.person (mail) on delete cascade on update cascade
+		foreign key (fk_person) references person (mail) on delete cascade on update cascade
 );
 
-create table performancetracker.student_in_team
+create table student_in_team
 (
 	fk_matnr int not null,
 	fk_team int not null,
 	constraint student_in_team_matrikelnummer_von_student_matrikelnummer_fk
-		foreign key (fk_matnr) references performancetracker.student (matnr) on delete cascade on update cascade,
+		foreign key (fk_matnr) references student (matnr) on delete cascade on update cascade,
 	constraint student_in_team_team_id_fk
-		foreign key (fk_team) references performancetracker.team (id) on delete cascade on update cascade
+		foreign key (fk_team) references team (id) on delete cascade on update cascade
 );
 
-create table performancetracker.zugriffsrecht
+create table zugriffsrecht
 (
 	abkuerzung char(3) not null primary key ,
 	beschreibung char(255) null,
@@ -194,53 +194,53 @@ create table performancetracker.zugriffsrecht
 		unique (abkuerzung)
 );
 
-create table performancetracker.dozent_in_kurs
+create table dozent_in_kurs
 (
 	fk_zugriffsrecht char(3) not null,
 	fk_mail char(50) not null,
 	fk_kurs int not null,
 	constraint dozent_in_kurs_dozent_fk_mail_fk
-		foreign key (fk_mail) references performancetracker.dozent (fk_person) on delete cascade on update cascade,
+		foreign key (fk_mail) references dozent (fk_person) on delete cascade on update cascade,
 	constraint dozent_in_kurs_kurs_id_fk
-		foreign key (fk_kurs) references performancetracker.kurs (id) on delete cascade on update cascade,
+		foreign key (fk_kurs) references kurs (id) on delete cascade on update cascade,
 	constraint dozent_in_kurs_zugriffsrecht_abkuerzung_fk
-		foreign key (fk_zugriffsrecht) references performancetracker.zugriffsrecht (abkuerzung) on update cascade
+		foreign key (fk_zugriffsrecht) references zugriffsrecht (abkuerzung) on update cascade
 );
 
-create table performancetracker.student_in_kurs
+create table student_in_kurs
 (
 	fk_kurs int null,
 	fk_matnr int null,
 	fk_zugriffsrechte char(3) null,
 	constraint student_in_kurs_kurs_id_fk
-		foreign key (fk_kurs) references performancetracker.kurs (id) on delete cascade on update cascade,
+		foreign key (fk_kurs) references kurs (id) on delete cascade on update cascade,
 	constraint student_in_kurs_matrikelnummer_von_student_matrikelnummer_fk
-		foreign key (fk_matnr) references performancetracker.student (matnr) on delete cascade on update cascade,
+		foreign key (fk_matnr) references student (matnr) on delete cascade on update cascade,
 	constraint student_in_kurs_zugriffsrecht_abkuerzung_fk
-		foreign key (fk_zugriffsrechte) references performancetracker.zugriffsrecht (abkuerzung) on update cascade
+		foreign key (fk_zugriffsrechte) references zugriffsrecht (abkuerzung) on update cascade
 );
 
 create index kurs_id
-	on performancetracker.anfrageaufnahme (fk_kurs);
+	on anfrageaufnahme (fk_kurs);
 
 create index student_matnr
-	on performancetracker.anfrageaufnahme (fk_matnr);
+	on anfrageaufnahme (fk_matnr);
 
 create index jahrgangId
-	on performancetracker.kurs (fk_jahrgang);
+	on kurs (fk_jahrgang);
 
 create index kursBuchstabeId
-	on performancetracker.kurs (fk_kurs_buchstabe);
+	on kurs (fk_kurs_buchstabe);
 
 create index modulId
-	on performancetracker.kurs (fk_modul);
+	on kurs (fk_modul);
 
 create index aktive_mitarbeit_id
-	on performancetracker.aktive_mitarbeit_in_kurs (fk_aktive_mitarbeit);
+	on aktive_mitarbeit_in_kurs (fk_aktive_mitarbeit);
 
 create index kurs_id
-	on performancetracker.aktive_mitarbeit_in_kurs (fk_kurs);
+	on aktive_mitarbeit_in_kurs (fk_kurs);
 
 create index student_matnr
-	on performancetracker.aktive_mitarbeit_in_kurs (fk_matnr);
+	on aktive_mitarbeit_in_kurs (fk_matnr);
 

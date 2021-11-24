@@ -12,7 +12,7 @@ VALUES
 
 INSERT INTO fachrichtung (bezeichnung)
 VALUES
-    ('WI'), ('BWL');
+    ('WI'), ('Angela'), ('BWL');
 
 INSERT INTO modul (fk_fachrichtung, modulnummer, beschreibung)
 VALUES
@@ -113,7 +113,8 @@ VALUES
     ('Einführung DB', 3, 'C', 2, 0),
     ('Einführung BWL', 3, 'C', 1, 0),
     ('Einführung OOP', 3, 'C', 3, 6),
-    ('Einführung OOP', 4, 'A', 3, 3);
+    ('Einführung OOP', 4, 'A', 3, 3),
+    ('Softwarearchitektur', 3, 'C', 3, 6);
 
 INSERT INTO student_in_kurs (fk_kurs, fk_matnr, fk_zugriffsrechte)
 VALUES
@@ -227,11 +228,43 @@ VALUES
 
 
 
+INSERT INTO `account` (`fk_mail`, `password_hash`) VALUES
+('doz.bugs.bunny@hwr.de', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
+('doz.dorothy.gale@hwr.de', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb'),
+('doz.james.bond@hwr.de', '70ba33708cbfb103f1a8e34afef333ba7dc021022b2d9aaa583aabb8058d8d67'),
+('doz.micky.mouse@hwr.de', 'c7d3776f235966314be6e72521d2802dca96ed8d5c0d89b9962360b9f13a0ea7'),
+('doz.super.man@hwr.de', '7031a423aa40a32f119b2b17e4278cbf2293fc036061c24deb1c7ad1d8ffcc64'),
+('stud.bat.man@hwr.de', '4dcc41d82b3d729ec999955d61de26a0e7b0badfbcc10339b0beb64a06909fca'),
+('stud.black.widow@hwr.de', '494fc4689701205276e443ef15b26cbb3675cf74ea48f115dc603ea608c4d12f'),
+('stud.captain.america@hwr.de', '6046d43a0ee25eaa163038a48edc36c42544e842765a5de1adc9c0cdc578b3ce'),
+('stud.cosmo.cramer@hwr.de', 'c0f3496fca22f6ba3274c0c1d3bb85b95998ee99d641409d38e0ceb5f36c87e8'),
+('stud.darth.vader@hwr.de', '2dfd7f53670d371c180b3954d1b8dfbdbd47ccebaac217bea41c1eb4a1b2b573'),
+('stud.ellen.ripley@hwr.de', '4056fc1d04987627c592920e0660f21f0ed0c8f573d465fb627b5f251230a79d'),
+('stud.fauler.sack@hwr.de', 'da586a30006b4d7b675d5a2c0863885a0266994b1c3d9521fb9c094e3fe6eb12'),
+('stud.greta.thunberg@hwr.de', '0a84f6b57c47ae9337ab98a46affd05a9edea3abb1ad14b0b633a8674a70d37d'),
+('stud.hannibal.lector@hwr.de', 'c64c8432dd4a8ca28dd7fc334f400808043a55b8b5c267fcd7028236a687d297'),
+('stud.indiana.jones@hwr.de', '66ecfd2c0f7d01a0a00e534a80ecb1de41cecec69ef5e3eb8097407b03e1293f'),
+('stud.marge.simpson@hwr.de', 'c734ae4bc04e82d134ebb249086fea417c2b3f00a8ab10bc7df1bb5cbc4dd281'),
+('stud.mary.poppins@hwr.de', '6bf1250000d56d0678a93c8c5f8f9c75b1604ca11e0eae93f9bd6e3aabaee27c'),
+('stud.mutti@hwr.de', '630ba8cabb188f1808000924f1bad2e14d8ee79b790d772b75344d7dd7cfb1ca'),
+('stud.princess.leia@hwr.de', '2baeb3f6577a248a57cd702509eab0f578a2df91dbf3c2539d79660827410fc6'),
+('stud.rocky.balboa@hwr.de', '5135c296df5394f847d0215aac988dafde80ef596400fd3cfba8e5a8f3322bb8'),
+('stud.scarlett.ohara@hwr.de', 'baf2d6d8117a387896a972bdc0d7f2f08531bc61eaea8236712a8fd2dd02d090'),
+('stud.super.streber@hwr.de', '29024edc04c6d467012dac2f156771d2f01453c6d33415cbff157fa7955db832'),
+('stud.the.joker@hwr.de', '17e492be914fecdf07c268c9290793fbdb1826436ce21c2221eff4b6dc51b891'),
+('stud.tony.montana@hwr.de', '74f476e0d8f671ca46fe6be4d7b71327092b6af0e81572d19c1ddfec70da7b14'),
+('stud.vito.corleone@hwr.de', 'aec95a56259c02c3719a4a10872c054111e98b834b651a68c99e1f8a0ea7d714'),
+('stud.über.schätzt@hwr.de', 'ddafe91ee665547f9694ae027583a6cd7d2c1c72883711816ecd2eb11ebcb8c5');
 
 
 
-
-
+INSERT INTO `anfrageaufnahme` (`fk_kurs`, `fk_matnr`) VALUES
+(5, 565758),
+(5, 123456),
+(5, 596061),
+(5, 596061),
+(5, 262728),
+(5, 383940);
 
 
 
