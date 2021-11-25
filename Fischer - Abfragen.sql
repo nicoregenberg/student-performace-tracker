@@ -4,7 +4,7 @@ SELECT
     vorname,
     nachname,
     KursID,
-    AVG(Note) AS 'KursNote'
+    SUM(Note) AS 'KursNote'
 FROM
     (
     SELECT
@@ -13,7 +13,7 @@ FROM
         nachname,
         fk_matnr,
         KursID,
-        AVG(wert) AS 'Note'
+        AVG(wert) * leistung_mit_kurs_und_student.gewichtung AS 'Note'
     FROM
         leistung_mit_kurs_und_student
     WHERE
@@ -42,15 +42,16 @@ FROM
 ) AS leistung
 RIGHT JOIN abgabe_in_kurs ON abgabe_in_kurs.id = leistung.fk_abgabe_in_kurs
 WHERE
-    abgabe_in_kurs.fk_kurs = 1
+    abgabe_in_kurs.fk_kurs = 1 and
+      frist <= '2021-10-10'
 GROUP BY
     abgabe_in_kurs.id
 HAVING
     COUNT(leistung.fk_matnr) < 1;
 
 
-
 ##alle Studenten in Teams
+##TODO Kurs eingrenzen, nicht auf View abfragen
 SELECT
     matnr,
     teamId,
@@ -63,8 +64,8 @@ DESC
     ;
 
 
-
 ## Latedays anzeigen
+#TODO funktion Latedays zu Stichtag (von Leistungstyp) berechnen mit Abgabedatum, frist, leistung_template Latedays
 SELECT
     (
         latedays_verfuegbar - SUM(
@@ -80,7 +81,8 @@ WHERE
 
 ##Student lässt sich alle Module anzeigen, für die er Admin ist
 SELECT
-    *
+    fk_kurs,
+    beschreibung
 FROM
     kurs_mit_studenten
 WHERE
@@ -135,7 +137,6 @@ WHERE
     matnr = 123456;
 
 
-
 ##Dozent lässt sich alle Kategorien und deren Gewichtung anzeigen (absteigend)
 SELECT
     fk_leistungstyp,
@@ -147,9 +148,8 @@ ORDER BY
 DESC
     ;
 
-
-
 ##Dozent lässt sich alle Studenten ohne Anfrage für ein Modul anzeigen
+#TODO eingrenzung Kurs, offene Anfragen anzeigen
 SELECT
     student.matnr,
     person.vorname,
@@ -164,6 +164,7 @@ WHERE
 
 
 ##Student lässt sich seine erreichten Noten aus allen Modulen absteigend anzeigen = Modul Gesamtnote
+#TODO View ändern
 SELECT
     KursNote.fk_matnr,
     modul.*,
@@ -174,7 +175,7 @@ FROM
         fk_matnr,
         fk_kurs,
         fk_modul,
-        AVG(Note) AS 'KursNote'
+        SUM(Note) AS 'KursNote'
     FROM
         (
         SELECT
@@ -182,7 +183,7 @@ FROM
             fk_matnr,
             fk_kurs,
             fk_modul,
-            AVG(wert) AS 'Note'
+            AVG(wert) * leistung_mit_kurs.gewichtung AS 'Note'
         FROM
             leistung_mit_kurs
         WHERE
@@ -214,12 +215,10 @@ WHERE
 
 ##Student lässt sich alle Noten eines Kurses anzeigen = Note je Kategorie
 SELECT
-    fk_leistung_template,
     fk_leistungstyp,
     latedays,
     gewichtung,
     teiler,
-    fk_matnr,
     AVG(wert) AS 'Note'
 FROM
     leistung_mit_kurs
@@ -230,7 +229,9 @@ GROUP BY
 
 
 
+
 ##Student lässt sich seine verbliebenen LateDays anzeigen
+#TODO view ändern
 SELECT
     fk_kurs,
     beschreibung,
@@ -251,6 +252,7 @@ GROUP BY
 
 
 ##Student/Team lässt sich LateDays der Mitglieder anzeigen
+#TODO view ändern
 SELECT DISTINCT
     kurs_mit_studenten.matnr,
     (
@@ -293,6 +295,7 @@ HAVING
 
 
 ##Student, Dozent: Welches Team hat Aufgabe XY bearbeitet (Team, Studenten, Aufgabe)?
+#TODO Eingrenzung auf  erbrachte Leistung
 SELECT
     id AS Aufgabe,
     fk_team AS Team,
@@ -306,6 +309,7 @@ WHERE
 
 
 ##Student (nur eigener Kurs), Dozent: Welche Studenten sind in Kurs XY?
+#TODO View ändern
 SELECT
     fk_kurs,
     matnr,
@@ -322,16 +326,10 @@ WHERE
 
 ##Student (nur er selbst), Dozent: Welche Leistungen hat Student XY bisher erbracht?
 SELECT
-    fk_kurs,
-    fk_team,
     wert,
     frist_verlaengerung_tage,
     frist,
-    fk_leistung_template,
-    fk_leistungstyp,
-    latedays,
-    gewichtung,
-    teiler
+    fk_leistungstyp
 FROM
     leistung_mit_kurs
 WHERE
@@ -340,6 +338,7 @@ WHERE
 
 
 ##Student (nur er selbst), Dozent: Mit welcher Verspätung wurde Leistung XY abgegeben (Leistung, Template, Kurs)?
+#TODO frist berechnen siehe obene Funktion
 SELECT
     id,
     frist_verlaengerung_tage,
@@ -353,6 +352,7 @@ WHERE
 
 
 ##Student: Wieviel Zeit bleibt für die Abgabe einer Leistung nur eigene Latedays
+#TODO in Funktion auslagern
 SELECT
     (
         DATEDIFF(
@@ -416,6 +416,7 @@ WHERE
 
 
 ##Student: Wieviel Zeit bleibt für die Abgabe einer Leistung mit LateDays der Gruppenmitglieder
+#TODO siehe oben in Funktion dann statt CURDATE() date übergeben
 SELECT
     (
         DATEDIFF(
@@ -491,16 +492,17 @@ WHERE
 
 
 ## Student, Dozent: Welche Durchschnittsnote inkl. Berücksichtigung der Gewichtung hat Student XY?
+#TODO View ändern
 SELECT
     fk_matnr,
     fk_kurs,
-    AVG(Note) AS 'KursNote'
+    SUM(Note) AS 'KursNote'
 FROM
     (
     SELECT
         fk_matnr,
         fk_kurs,
-        AVG(wert) AS 'Note'
+        AVG(wert) * leistung_mit_kurs.gewichtung AS 'Note'
     FROM
         leistung_mit_kurs
     WHERE
@@ -516,6 +518,7 @@ GROUP BY
 
 
 ##Dozent: Welche Durchschnittsnote wurde in einem Kurs für ein bestimmtes Leistungstemplate erreicht?
+#TODO View ändern
 SELECT
     fk_leistung_template,
     fk_leistungstyp,
@@ -533,6 +536,7 @@ GROUP BY
 
 
 ##Student, Dozent: Welche aktiven Mitarbeiten hat Student XY in einem Kurs erbracht?
+#TODO View ändern, redundanz fixen
 SELECT
     bezeichnung,
    zeitpunkt,
@@ -540,7 +544,7 @@ SELECT
 FROM
     aktive_mitarbeit_mit_kurs_und_student
 WHERE
-   fk_matnr = 123456 AND fk_kurs = 3;
+   fk_matnr = 123456 AND fk_kurs = 1;
 
 
 
@@ -557,7 +561,8 @@ ORDER BY
 
 
 
-##Dozent: Welche Studenten bekommen Abzug (und wieviel) wegen überschrittener Latedays für Leistung XY?
+##Dozent: Welche Studenten bekommen Abzug (und wieviel) wegen überschrittener Latedays?
+#TODO test
 SELECT
     fk_matnr,
     (
