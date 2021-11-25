@@ -28,3 +28,18 @@ JOIN aktive_mitarbeit am on am.id = ak.fk_aktive_mitarbeit
 JOIN student s on ak.fk_matnr = s.matnr
 JOIN person p on s.fk_mail = p.mail
 ORDER BY zeitpunkt;
+
+CREATE VIEW berechnete_latedays AS
+SELECT SUM(difference + frist_verlaengerung_tage + latedays) AS verfuegbare_latedays, fk_kurs, fk_leistungstyp, fk_matnr FROM
+(
+    SELECT p.frist_verlaengerung_tage, p.fk_leistungstyp, p.latedays, p.fk_matnr, p.fk_kurs, DATEDIFF(p.frist, p.abgabe_ist)
+    AS difference
+    FROM (
+        SELECT frist, abgabe_ist, frist_verlaengerung_tage, fk_leistungstyp, latedays, fk_matnr, fk_kurs
+        FROM abgabe_in_kurs a
+        JOIN leistung l on a.id = l.fk_abgabe_in_kurs
+        JOIN leistung_template lt on a.fk_leistung_template = lt.id)
+        p)
+    k
+WHERE difference + k.frist_verlaengerung_tage < 0
+GROUP BY fk_leistungstyp, fk_matnr;

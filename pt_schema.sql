@@ -212,6 +212,7 @@ create table student_in_kurs
 	fk_kurs int null,
 	fk_matnr int null,
 	fk_zugriffsrechte char(3) null,
+	aktive_mitarbeit_bonus int null,
 	constraint student_in_kurs_kurs_id_fk
 		foreign key (fk_kurs) references kurs (id) on delete cascade on update cascade,
 	constraint student_in_kurs_matrikelnummer_von_student_matrikelnummer_fk
