@@ -32,7 +32,7 @@ ORDER BY zeitpunkt;
 
 -- View für Abfragen unten
 CREATE VIEW berechnete_latedays AS
-SELECT SUM(difference + frist_verlaengerung_tage + latedays) AS verfuegbare_latedays, fk_kurs, fk_leistungstyp, fk_matnr FROM
+SELECT SUM(difference + k.frist_verlaengerung_tage + k.latedays) AS verfuegbare_latedays, k.fk_kurs, k.fk_leistungstyp, k.fk_matnr FROM
 (
     SELECT p.frist_verlaengerung_tage, p.fk_leistungstyp, p.latedays, p.fk_matnr, p.fk_kurs, DATEDIFF(p.frist, p.abgabe_ist)
     AS difference
@@ -44,7 +44,7 @@ SELECT SUM(difference + frist_verlaengerung_tage + latedays) AS verfuegbare_late
         p)
     k
 WHERE difference + k.frist_verlaengerung_tage < 0
-GROUP BY fk_leistungstyp, fk_matnr;
+GROUP BY fk_leistungstyp, fk_matnr, fk_kurs;
 
 -- Berechnung Notenabzug für Student
 SELECT SUM(verfuegbare_latedays) AS abzug_auf_note
