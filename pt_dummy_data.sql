@@ -1,4 +1,4 @@
-USE performacetrackerhwr;
+USE performancetracker;
 
 INSERT INTO kurs_buchstabe (wert)
 VALUES
@@ -12,7 +12,7 @@ VALUES
 
 INSERT INTO fachrichtung (bezeichnung)
 VALUES
-    ('WI'), ('Angela'), ('BWL');
+    ('WI'), ('Elektrotechnik'), ('BWL');
 
 INSERT INTO modul (fk_fachrichtung, modulnummer, beschreibung)
 VALUES
@@ -20,12 +20,28 @@ VALUES
     ('WI', 602, 'Datenbanken'),
     ('WI', 301, 'Oldschool Java'),
     ('BWL', 10, 'Die Kunst, Leute zu überreden, Dinge zu kaufen, die sie nicht brauchen (Marketing)'),
-    ('BWL', 12, 'Pseudowissenschaft für junge Gründer');
+    ('BWL', 12, 'Pseudowissenschaft für junge Gründer'),
+    ('Elektrotechnik', 47, 'Mathematik')
+    ('Elektrotechnik', 48, 'Regelungstechnik')
+    ('Elektrotechnik', 51, 'Halbleitertechnik');
 
 INSERT INTO team (max_mitglieder, kommentar)
 VALUES
+    (3, 'Die zwei lustigen Drei'),
+    (3, 'Die Helmers'),
+    (3, null),
+    (4, 'Die fantastischen Vier'),
+    (3, 'Team 50/50'),
+    (3, null),
+    (3, 'Havana Club'),
     (3, null),
     (3, 'Altenheim :-) '),
+    (6, 'Landliebe Sahnepuddig'),
+    (6, 'die Unkreativen'),
+    (6, null),
+    (6, 'The Big Beer Theory'),
+    (6, null),
+    (6, 'Stuzubis'),
     (6, null),
     (2, 'Just married');
 
@@ -56,7 +72,26 @@ VALUES
     ('stud.greta.thunberg@hwr.de', 'Greta', 'Thunberg'),
     ('stud.fauler.sack@hwr.de', 'Fauler', 'Sack'),
     ('stud.super.streber@hwr.de', 'Super', 'Streber'),
-    ('stud.über.schätzt@hwr.de', 'Über', 'Schätzt');
+    ('stud.über.schätzt@hwr.de', 'Über', 'Schätzt'),
+    ('mcopin0@spiegel.de', 'Morse', 'Copin'),
+    ('sbangs1@fastcompany.com', 'Sadie', 'Bangs'),
+    ('aellacombe2@skyrock.com', 'Athena', 'Ellacombe'),
+    ('ayerrall3@yahoo.co.jp', 'Ariela', 'Yerrall'),
+    ('jmatley4@weebly.com', 'Jackie', 'Matley'),
+    ('zsabey5@businesswire.com', 'Zacharia', 'Sabey'),
+    ('lhinkens6@furl.net', 'Lesley', 'Hinkens'),
+    ('bhellewell7@1und1.de', 'Bo', 'Hellewell'),
+    ('zsanton8@tinypic.com', 'Zarah', 'Santon'),
+    ('mspark9@ucoz.com', 'Melesa', 'Spark'),
+    ('asaigera@cargocollective.com', 'Annie', 'Saiger'),
+    ('tclixbyb@state.tx.us', 'Thalia', 'Clixby'),
+    ('ahairec@amazon.com', 'Annaliese', 'Haire'),
+    ('idenisotd@themeforest.net', 'Izzy', 'Denisot'),
+    ('dmore@dailymail.co.uk', 'Dorolice', 'Mor'),
+    ('tbranef@prweb.com', 'Tammara', 'Brane'),
+    ('gbanaszczykg@wordpress.org', 'Gilberte', 'Banaszczyk'),
+    ('wdmitrh@flavors.me', 'Walt', 'Dmitr'),
+    ('dedwickei@nih.gov', 'Desmund', 'Edwicke');
 
 INSERT INTO dozent (fk_person)
 VALUES
@@ -87,13 +122,36 @@ VALUES
     ('stud.greta.thunberg@hwr.de', 'BWL', 141516),
     ('stud.fauler.sack@hwr.de', 'BWL', 171819),
     ('stud.super.streber@hwr.de', 'BWL', 202122),
-    ('stud.über.schätzt@hwr.de', 'BWL', 232425);
+    ('stud.über.schätzt@hwr.de', 'BWL', 232425),
+    ('mcopin0@spiegel.de', 'Elektrotechnik', 223340),
+    ('sbangs1@fastcompany.com', 'Elektrotechnik', 223341),
+    ('aellacombe2@skyrock.com', 'Elektrotechnik', 223342),
+    ('ayerrall3@yahoo.co.jp', 'Elektrotechnik', 223343),
+    ('jmatley4@weebly.com', 'Elektrotechnik', 22335),
+    ('zsabey5@businesswire.com', 'Elektrotechnik', 223346),
+    ('lhinkens6@furl.net', 'Elektrotechnik', 22337),
+    ('bhellewell7@1und1.de', 'Elektrotechnik', 22338),
+    ('zsanton8@tinypic.com', 'Elektrotechnik', 22339),
+    ('mspark9@ucoz.com', 'Elektrotechnik', 223350),
+    ('asaigera@cargocollective.com', 'WI', 223351),
+    ('tclixbyb@state.tx.us', 'WI', 223352),
+    ('ahairec@amazon.com', 'WI', 223353),
+    ('idenisotd@themeforest.net', 'WI', 223354),
+    ('dmore@dailymail.co.uk', 'WI', 223355),
+    ('tbranef@prweb.com', 'WI', 223356),
+    ('gbanaszczykg@wordpress.org', 'WI', 223357),
+    ('wdmitrh@flavors.me', 'WI', 223358),
+    ('dedwickei@nih.gov', 'WI', 223359);
 
 INSERT INTO student_in_team (fk_matnr, fk_team)
 VALUES
     (123456, 1), (789010, 1), (111213, 1), (141516, 2), (171819, 2),
-    (123456, 2), (232425, 3), (262728, 3), (293031, 3), (171819, 3),
-    (123456, 3), (383940, 3), (414243, 4), (141516, 4);
+    (123456, 2), (232425, 3), (262728, 3), (293031, 3), (171819, 4),
+    (123456, 4), (383940, 4), (414243, 4), (141516, 5), (223340, 6), 
+    (223341, 7), (223342, 7), (223343, 8), (223344, 9), (223345, 10), 
+    (223346, 10), (223347, 10), (223348, 11), (223349, 11), (223350, 11), 
+    (223351, 12), (223352, 12), (223353, 13), (223354, 14), (223355, 15), 
+    (223356, 15), (223357, 15), (223358, 16), (223359, 16);
 
 INSERT INTO zugriffsrecht (abkuerzung, beschreibung)
 VALUES
@@ -114,7 +172,12 @@ VALUES
     ('Einführung BWL', 3, 'C', 1, 0),
     ('Einführung OOP', 3, 'C', 3, 6),
     ('Einführung OOP', 4, 'A', 3, 3),
-    ('Softwarearchitektur', 3, 'C', 3, 6);
+    ('Softwarearchitektur', 3, 'C', 3, 6), 
+    ('Mathematik für Ingenieure', 3, 'C', 6, 0),
+    ('Einführung in die theoretische Regelungstechnik', 1, 'C', 7, 9),
+    ('Einführung in die praktische Regelungstechnik', 1, 'C', 7, 5),
+    ('Einführung in die theoretische Halbleitertechnik', 1, 'C', 8, 6);
+    ('Einführung in die praktische Halbleitertechnik', 1, 'C', 8, 4);
 
 INSERT INTO student_in_kurs (fk_kurs, fk_matnr, fk_zugriffsrechte)
 VALUES
@@ -128,7 +191,26 @@ VALUES
     (2, 505152, 'urw'), (2, 535455, 'urw'), (2, 565758, 'urw'), (2, 596061, 'urw'),
     (1, 262728, 'kwd'), (1, 293031, 'urw'), (1, 323334, 'urw'), (1, 353637, 'urw'),
     (1, 383940, 'kwd'), (1, 414243, 'urw'), (1, 444546, 'urw'), (1, 474849, 'urw'),
-    (1, 505152, 'kwd'), (1, 535455, 'urw'), (1, 565758, 'urw'), (1, 596061, 'urw');
+    (5, 223340, 'kwd'), (6, 223340, 'urw'), (7, 223340, 'urw'), (8, 223340, 'urw'),
+    (9, 223341, 'urw'), (10, 223341, 'urw'), (5, 223341, 'urw'), (6, 223341, 'urw'),
+    (7, 223342, 'urw'), (8, 223342, 'urw'), (9, 223342, 'urw'), (10, 223342, 'urw'),
+    (5, 223343, 'urw'), (6, 223343, 'urw'), (7, 223343, 'urw'), (8, 223343, 'urw'),
+    (9, 223344, 'urw'), (10, 223344, 'urw'), (5, 223344, 'urw'), (6, 223344, 'urw'),
+    (7, 223345, 'urw'), (8, 223345, 'urw'), (9, 223345, 'urw'), (10, 223345, 'urw'),
+    (5, 223346, 'urw'), (6, 223346, 'urw'), (7, 223346, 'urw'), (8, 223346, 'urw'),
+    (9, 223347, 'urw'), (10, 223347, 'urw'), (5, 223347, 'urw'), (6, 223347, 'urw'),
+    (7, 223348, 'urw'), (8, 223348, 'urw'), (9, 223348, 'urw'), (10, 223348, 'urw'),
+    (5, 223349, 'urw'), (6, 223349, 'urw'), (7, 223349, 'urw'), (8, 223349, 'urw'),
+    (5, 223350, 'urw'), (6, 223350, 'urw'), (7, 223350, 'urw'), (8, 223350, 'urw'),
+    (9, 223351, 'urw'), (10, 223351, 'urw'), (5, 223351, 'urw'), (6, 223351, 'urw'),
+    (7, 223352, 'urw'), (8, 223352, 'urw'), (9, 223352, 'urw'), (10, 223352, 'urw'),
+    (5, 223353, 'urw'), (6, 223353, 'urw'), (7, 223353, 'urw'), (8, 223353, 'urw'),
+    (9, 223354, 'urw'), (10, 223354, 'urw'), (5, 223354, 'urw'), (6, 223354, 'urw'),
+    (7, 223355, 'urw'), (8, 223355, 'urw'), (9, 223355, 'urw'), (10, 223355, 'urw'),
+    (5, 223356, 'urw'), (6, 223356, 'urw'), (7, 223356, 'urw'), (8, 223356, 'urw'),
+    (9, 223357, 'urw'), (10, 223357, 'urw'), (5, 223357, 'urw'), (6, 223357, 'urw'),
+    (7, 223358, 'urw'), (8, 223358, 'urw'), (9, 223358, 'urw'), (10, 223358, 'urw'),
+    (7, 223359, 'urw'), (8, 223359, 'urw'), (9, 223359, 'urw'), (10, 223359, 'urw');
 
 INSERT INTO dozent_in_kurs (fk_zugriffsrecht, fk_mail, fk_kurs)
 VALUES
@@ -137,7 +219,13 @@ VALUES
     ('krw', 'doz.james.bond@hwr.de', 1),
     ('krd', 'doz.james.bond@hwr.de', 2),
     ('krd', 'doz.bugs.bunny@hwr.de', 3),
-    ('krd', 'doz.dorothy.gale@hwr.de', 4);
+    ('krd', 'doz.dorothy.gale@hwr.de', 4)
+    ('grd', 'doz.super.man@hwr.de', 5),
+    ('krd', 'doz.micky.mouse@hwr.de', 6),
+    ('krw', 'doz.james.bond@hwr.de', 7),
+    ('krd', 'doz.james.bond@hwr.de', 8),
+    ('krd', 'doz.bugs.bunny@hwr.de', 9),
+    ('krd', 'doz.dorothy.gale@hwr.de', 10);
 
 INSERT INTO leistungstyp (bezeichnung)
 VALUES
@@ -197,7 +285,45 @@ VALUES
     (STR_TO_DATE('05.12.21','%d.%m.%y'), 6, 2, 1),
     (STR_TO_DATE('05.12.21','%d.%m.%y'), 6, 2, 1),
     (STR_TO_DATE('01.11.21','%d.%m.%y'), 4, 3, 4),
-    (STR_TO_DATE('01.12.21','%d.%m.%y'), 5, 3, 1);
+    (STR_TO_DATE('01.12.21','%d.%m.%y'), 5, 3, 1),
+    (STR_TO_DATE('01.10.21','%d.%m.%y'), 1, 5, 3),
+    (STR_TO_DATE('01.11.21','%d.%m.%y'), 2, 5, 3),
+    (STR_TO_DATE('01.12.21','%d.%m.%y'), 3, 5, 3),
+    (STR_TO_DATE('10.12.21','%d.%m.%y'), 4, 5, 1),
+    (STR_TO_DATE('01.10.21','%d.%m.%y'), 5, 5, 1),
+    (STR_TO_DATE('05.10.21','%d.%m.%y'), 1, 5, 1),
+    (STR_TO_DATE('12.10.21','%d.%m.%y'), 2, 5, 1),
+    (STR_TO_DATE('20.10.21','%d.%m.%y'), 3, 6, 1),
+    (STR_TO_DATE('28.10.21','%d.%m.%y'), 4, 6, 1),
+    (STR_TO_DATE('10.11.21','%d.%m.%y'), 1, 6, 1),
+    (STR_TO_DATE('18.11.21','%d.%m.%y'), 2, 6, 1),
+    (STR_TO_DATE('30.11.21','%d.%m.%y'), 3, 6, 1),
+    (STR_TO_DATE('05.12.21','%d.%m.%y'), 4, 6, 1),
+    (STR_TO_DATE('29.11.21','%d.%m.%y'), 1, 7, 6),
+    (STR_TO_DATE('01.12.21','%d.%m.%y'), 2, 7, 1),
+    (STR_TO_DATE('01.10.21','%d.%m.%y'), 3, 7, 1),
+    (STR_TO_DATE('05.10.21','%d.%m.%y'), 4, 7, 1),
+    (STR_TO_DATE('07.10.21','%d.%m.%y'), 1, 7, 1),
+    (STR_TO_DATE('10.10.21','%d.%m.%y'), 2, 7, 1),
+    (STR_TO_DATE('12.10.21','%d.%m.%y'), 3, 7, 1),
+    (STR_TO_DATE('15.10.21','%d.%m.%y'), 4, 8, 1),
+    (STR_TO_DATE('20.10.21','%d.%m.%y'), 5, 8, 1),
+    (STR_TO_DATE('24.10.21','%d.%m.%y'), 1, 8, 1),
+    (STR_TO_DATE('28.10.21','%d.%m.%y'), 2, 8, 1),
+    (STR_TO_DATE('10.11.21','%d.%m.%y'), 3, 8, 1),
+    (STR_TO_DATE('14.11.21','%d.%m.%y'), 4, 8, 1),
+    (STR_TO_DATE('18.11.21','%d.%m.%y'), 1, 8, 1),
+    (STR_TO_DATE('18.11.21','%d.%m.%y'), 2, 9, 1),
+    (STR_TO_DATE('18.11.21','%d.%m.%y'), 3, 9, 1),
+    (STR_TO_DATE('25.11.21','%d.%m.%y'), 1, 9, 1),
+    (STR_TO_DATE('28.11.21','%d.%m.%y'), 2, 9, 1),
+    (STR_TO_DATE('30.11.21','%d.%m.%y'), 3, 9, 1),
+    (STR_TO_DATE('05.12.21','%d.%m.%y'), 4, 9, 1),
+    (STR_TO_DATE('05.12.21','%d.%m.%y'), 7, 9, 1),
+    (STR_TO_DATE('01.11.21','%d.%m.%y'), 8, 10, 4),
+    (STR_TO_DATE('01.12.21','%d.%m.%y'), 3, 10, 1),
+    (STR_TO_DATE('01.11.21','%d.%m.%y'), 4, 10, 4),
+    (STR_TO_DATE('01.12.21','%d.%m.%y'), 10, 10, 1);
 
 INSERT INTO aktive_mitarbeit (zeitpunkt, nachweis, bezeichnung)
 VALUES
@@ -205,16 +331,24 @@ VALUES
     (STR_TO_DATE('18.11.21 04:03','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
     (STR_TO_DATE('02.12.21 10:30','%d.%m.%y %H:%i'), 'Vortrag Präsenz', 'Vorstellung Gruppenstatus'),
     (STR_TO_DATE('18.12.21 22:22','%d.%m.%y %H:%i'), 'www.one.google.com/ddhfhrg56647474hfhghfhfhfhf7939857345hwfkjsdf', 'Zusatzaufgabe ERM');
+    (STR_TO_DATE('15.11.21 11:20','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
+    (STR_TO_DATE('20.11.21 04:03','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
+    (STR_TO_DATE('21.12.21 10:30','%d.%m.%y %H:%i'), 'Vortrag Präsenz', 'Vorstellung Gruppenstatus'),
+    (STR_TO_DATE('18.10.21 22:22','%d.%m.%y %H:%i'), 'www.one.google.com/ddhfhrg56647474hfhghfhfhfhf7939857345hwfkjsdf', 'Zusatzaufgabe ERM');
 
 INSERT INTO aktive_mitarbeit_in_kurs (fk_matnr, fk_kurs, fk_aktive_mitarbeit)
 VALUES
     (123456, 1, 1), (789010, 1, 1), (789010, 1, 2),
-    (111213, 2, 3), (141516, 2, 3), (171819, 2, 3), (171819, 2, 4);
+    (111213, 2, 3), (141516, 2, 3), (171819, 2, 3), 
+    (171819, 2, 4), (223340, 5, 3), (223340, 7, 6), 
+    (223340, 6, 5), (223345, 7, 4), (223345, 8, 2), 
+    (223345, 9, 5), (223357, 10, 6), (141516, 4, 5),
+    (262728, 3, 4);
 
 INSERT INTO leistung (fk_matnr, wert, fk_abgabe_in_kurs, abgabe_ist, frist_verlaengerung_tage, fk_team, festgesetzt)
 VALUES
     (123456, 1.0, 1, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (123456, 2.0, 2, STR_TO_DATE('04.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
+    (123456, 2.0, 2, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
     (123456, 1.5, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
     (123456, 3.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (123456, 3.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
@@ -223,9 +357,7 @@ VALUES
     (789010, 1.0, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
     (789010, 2.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (789010, 1.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-(123456, 1.0, 14, STR_TO_DATE('05.12.21 11:11','%d.%m.%y %H:%i'), 0, 1, false);
-
-DELETE FROM leistung;
+    
 
 
 
