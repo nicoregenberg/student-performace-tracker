@@ -158,13 +158,13 @@ FROM
     student
 JOIN person ON person.mail = student.fk_mail
 LEFT JOIN anfrageaufnahme ON student.matnr = anfrageaufnahme.fk_matnr
+JOIN student_in_kurs on student.matnr = student_in_kurs.fk_matnr
 WHERE
-    anfrageaufnahme.fk_kurs IS NULL;
+    anfrageaufnahme.fk_kurs = 1 and student_in_kurs.fk_kurs = 1;
 
 
 
 ##Student lässt sich seine erreichten Noten aus allen Modulen absteigend anzeigen = Modul Gesamtnote
-#TODO View ändern
 SELECT
     KursNote.fk_matnr,
     modul.*,
