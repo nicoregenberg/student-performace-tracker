@@ -29,6 +29,8 @@ JOIN student s on ak.fk_matnr = s.matnr
 JOIN person p on s.fk_mail = p.mail
 ORDER BY zeitpunkt;
 
+
+-- View für Abfragen unten
 CREATE VIEW berechnete_latedays AS
 SELECT SUM(difference + frist_verlaengerung_tage + latedays) AS verfuegbare_latedays, fk_kurs, fk_leistungstyp, fk_matnr FROM
 (
@@ -43,3 +45,17 @@ SELECT SUM(difference + frist_verlaengerung_tage + latedays) AS verfuegbare_late
     k
 WHERE difference + k.frist_verlaengerung_tage < 0
 GROUP BY fk_leistungstyp, fk_matnr;
+
+-- Berechnung Notenabzug für Student
+SELECT SUM(verfuegbare_latedays) AS abzug_auf_note
+FROM berechnete_latedays
+WHERE fk_matnr = 123456
+AND fk_kurs = 1
+AND verfuegbare_latedays < 0;
+
+-- verfügbare latedays (alle Kategorien in denen noch welche übrig sind werden angezeigt)
+SELECT verfuegbare_latedays, fk_leistungstyp
+FROM berechnete_latedays
+WHERE fk_matnr = 123456
+AND fk_kurs = 1
+AND verfuegbare_latedays > 0;
