@@ -1,30 +1,50 @@
 ##Dozent fragt alle Noten des Kurses ab = Noten je Name
-SELECT
+CREATE View Kursnote AS
+SELECT DISTINCT
+    fk_kurs,
     fk_matnr,
-    vorname,
-    nachname,
-    KursID,
-    SUM(Note) AS 'KursNote'
+    FORMAT(
+        Kursnote -(1 / 15) *(
+            IFNULL(aktive_mitarbeit_in_Prozent, 0) +( CASE WHEN berechne_latedays_aggregiert(fk_kurs, fk_matnr) >= 0 THEN 0 ELSE berechne_latedays_aggregiert(fk_kurs, fk_matnr) END)
+        ),
+        1
+    )  AS Kursnote
 FROM
     (
     SELECT
-        leistung_template_id,
-        vorname,
-        nachname,
+        fk_kurs,
         fk_matnr,
-        KursID,
-        AVG(wert) * leistung_mit_kurs_und_student.gewichtung AS 'Note'
+        (
+            FORMAT((SUM(NoteGewichtet)),
+            2)
+        ) AS Kursnote
     FROM
-        leistung_mit_kurs_und_student
-    WHERE
-        KursID = 3
-    GROUP BY
-        fk_matnr,
-        id
-) AS KategorieNoten
+        (
+        SELECT
+            fk_kurs,
+            fk_matnr,
+            fk_leistungstyp,
+            (
+                Note *(
+                    gewichtung /(
+                    SELECT
+                        SUM(N.gewichtung)
+                    FROM
+                        Note_nach_Leistungstyp AS N
+                    WHERE
+                        N.fk_kurs = Note_nach_Leistungstyp.fk_kurs AND N.fk_matnr = Note_nach_Leistungstyp.fk_matnr
+                )
+                )
+            ) AS NoteGewichtet
+        FROM
+            Note_nach_Leistungstyp
+    ) AS abc
 GROUP BY
-    fk_matnr,
-    KursID;
+    fk_kurs,
+    fk_matnr
+) AS def
+INNER JOIN student_in_kurs USING(fk_matnr, fk_kurs);
+
 
 
 
@@ -51,53 +71,45 @@ HAVING
 
 
 ##alle Studenten in Teams
-##TODO Kurs eingrenzen, nicht auf View abfragen
-SELECT
-    matnr,
-    teamId,
-    kommentar
+SELECT DISTINCT
+    fk_matnr, fk_team
 FROM
-    team_mit_studenten
+    student_in_team JOIN student_in_kurs USING (fk_matnr)
+WHERE
+    fk_kurs = 1
 ORDER BY
-    teamId
-DESC
-    ;
+    student_in_team.fk_team
+DESC;
 
 
 ## Latedays anzeigen
-#TODO funktion Latedays zu Stichtag (von Leistungstyp) berechnen mit Abgabedatum, frist, leistung_template Latedays
-SELECT
-    (
-        latedays_verfuegbar - SUM(
-            frist_verlaengerung_tage
-        )
-    ) AS 'Verbleibende Latedays'
-FROM
-    leistung_mit_kurs
-WHERE
-    fk_matnr = 123456 AND fk_kurs = 1;
+call berechne_latedays(1, 123456);
 
 
 
-##Student lässt sich alle Module anzeigen, für die er Admin ist
+##Student lässt sich alle Kurse anzeigen, für die er Admin ist
 SELECT
     fk_kurs,
     beschreibung
 FROM
-    kurs_mit_studenten
+    student_in_kurs
+JOIN student ON student_in_kurs.fk_matnr = student.matnr
+JOIN kurs ON kurs.id = student_in_kurs.fk_kurs
 WHERE
     matnr = 262728 AND fk_zugriffsrechte = 'kwd';
 
 
 
-##Dozent lässt sich alle E-Mails eines Kurses im Jahrgang anzeigen
+##Dozent lässt sich alle E-Mail-Adressen eines Kurses im Jahrgang anzeigen
 SELECT
     fk_kurs,
     fk_mail
 FROM
-    kurs_mit_studenten
+    student_in_kurs
+JOIN student ON student_in_kurs.fk_matnr = student.matnr
+JOIN kurs ON kurs.id = student_in_kurs.fk_kurs
 WHERE
-    fk_jahrgang = 3 AND fk_modul = 2;
+    fk_jahrgang = 3 AND fk_kurs = 2;
 
 
 
@@ -111,7 +123,11 @@ SELECT DISTINCT
         fk_aktive_mitarbeit
     )
 FROM
-    aktive_mitarbeit_mit_kurs_und_student
+    aktive_mitarbeit_in_kurs
+JOIN kurs ON kurs.id = aktive_mitarbeit_in_kurs.fk_kurs
+JOIN dozent_in_kurs ON dozent_in_kurs.fk_kurs = kurs.id
+JOIN student ON student.matnr = aktive_mitarbeit_in_kurs.fk_matnr
+JOIN person ON person.mail = student.fk_mail
 WHERE
     Dozent_mail = 'doz.micky.mouse@hwr.de'
 GROUP BY
@@ -128,11 +144,14 @@ SELECT
     matnr,
     vorname,
     nachname,
-    teamId,
+    team.id,
     max_mitglieder,
     kommentar
 FROM
-    team_mit_studenten
+    student_in_team
+JOIN team ON student_in_team.fk_team = team.id
+JOIN student ON student.matnr = student_in_team.fk_matnr
+JOIN person ON person.mail = student.fk_mail
 WHERE
     matnr = 123456;
 
@@ -148,8 +167,7 @@ ORDER BY
 DESC
     ;
 
-##Dozent lässt sich alle Studenten ohne Anfrage für ein Modul anzeigen
-#TODO eingrenzung Kurs, offene Anfragen anzeigen
+##Dozent lässt sich alle Studenten offene Anfrage für ein Modul anzeigen
 SELECT
     student.matnr,
     person.vorname,
@@ -159,143 +177,67 @@ FROM
 JOIN person ON person.mail = student.fk_mail
 LEFT JOIN anfrageaufnahme ON student.matnr = anfrageaufnahme.fk_matnr
 WHERE
-    anfrageaufnahme.fk_kurs IS NULL;
+    anfrageaufnahme.fk_kurs = 6;
 
 
 
-##Student lässt sich seine erreichten Noten aus allen Modulen absteigend anzeigen = Modul Gesamtnote
-#TODO View ändern
-SELECT
-    KursNote.fk_matnr,
-    modul.*,
-    AVG(KursNote.KursNote)
-FROM
+##Student lässt sich seine erreichten Noten aus allen Modulen anzeigen = Modul Gesamtnote
+CREATE VIEW Modulnote AS
+SELECT fk_matnr, fk_modul , FORMAT(Sum(a),1) AS Modulnote
+
+FROM (SELECT DISTINCT
+    Kursnote.fk_matnr, kurs.fk_modul,
     (
-    SELECT
-        fk_matnr,
-        fk_kurs,
-        fk_modul,
-        SUM(Note) AS 'KursNote'
-    FROM
-        (
-        SELECT
-            fk_leistung_template,
-            fk_matnr,
-            fk_kurs,
-            fk_modul,
-            AVG(wert) * leistung_mit_kurs.gewichtung AS 'Note'
-        FROM
-            leistung_mit_kurs
-        WHERE
-            fk_matnr = 123456
-        GROUP BY
-            fk_kurs,
-            fk_leistung_template
-    ) AS KategorieNoten
-GROUP BY
-    fk_matnr,
-    fk_kurs
-) AS KursNote
-JOIN modul ON modul.id = fk_modul
-GROUP BY
-    fk_modul,
-    fk_matnr;
-
+        Kursnote.Kursnote *(
+            kurs.modul_gewichtung /(
+            SELECT
+                SUM(modul_gewichtung)
+            FROM
+                (
+                SELECT DISTINCT
+                    *
+                FROM
+                    kurs AS k
+                JOIN student_in_kurs AS sk
+                ON
+                    sk.fk_kurs = k.id
+                WHERE
+                    k.fk_modul = kurs.fk_modul AND sk.fk_matnr = Kursnote.fk_matnr
+            ) AS abc
+        
+        )
+    )) AS a
+FROM
+    Kursnote
+JOIN kurs ON kurs.id = Kursnote.fk_kurs) as def
+GROUP BY fk_modul, fk_matnr;
 
 
 ##Student lässt sich offene Anfragen für Module anzeigen
+##TODO Kursname von Moodle nachbauen
 SELECT
-    *
+    fk_kurs, CONCAT(kurs.beschreibung , ' ',kurs.fk_kurs_buchstabe,' Modul ', kurs.fk_modul) AS Kurs
 FROM
     anfrageaufnahme
+JOIN kurs ON kurs.id = anfrageaufnahme.fk_kurs
 WHERE
     anfrageaufnahme.fk_matnr = 123456;
 
 
 
 ##Student lässt sich alle Noten eines Kurses anzeigen = Note je Kategorie
-SELECT
-    fk_leistungstyp,
-    latedays,
-    gewichtung,
-    teiler,
-    AVG(wert) AS 'Note'
-FROM
-    leistung_mit_kurs
-WHERE
-    fk_matnr = 123456 AND fk_kurs = 3
-GROUP BY
-    id;
-
-
-
-
-##Student lässt sich seine verbliebenen LateDays anzeigen
-#TODO view ändern
-SELECT
-    fk_kurs,
-    beschreibung,
-    fk_jahrgang,
-    fk_kurs_buchstabe,
-    fk_modul,
-    latedays_verfuegbar,
-    (
-        latedays_verfuegbar - SUM(frist_verlaengerung_tage)
-    ) AS 'Verbleibende Latedays'
-FROM
-    leistung_mit_kurs
-WHERE
-    fk_matnr = 123456
-GROUP BY
-    fk_kurs;
-
-
-
-##Student/Team lässt sich LateDays der Mitglieder anzeigen
-#TODO view ändern
-SELECT DISTINCT
-    kurs_mit_studenten.matnr,
-    (
-        kurs_mit_studenten.latedays_verfuegbar - SUM(
-            leistung.frist_verlaengerung_tage
-        )
-    ) AS 'Verbleibende Latedays'
-FROM
-    kurs_mit_studenten
-JOIN student_in_team ON student_in_team.fk_matnr = kurs_mit_studenten.matnr
-LEFT JOIN leistung ON kurs_mit_studenten.matnr = leistung.fk_matnr
-WHERE
-    student_in_team.fk_team = 3 AND kurs_mit_studenten.fk_kurs = 4
-GROUP BY
-    kurs_mit_studenten.matnr,
-    kurs_mit_studenten.latedays_verfuegbar;
-
-
-
-##Student lässt sich Kategorien ohne Note anzeigen
-SELECT DISTINCT
-    leistung_template.*
-FROM
-    (
-    SELECT
-        *
-    FROM
-        leistung
-    WHERE
-        leistung.fk_matnr = 123456
-) AS leistung
-RIGHT JOIN abgabe_in_kurs ON abgabe_in_kurs.id = leistung.fk_abgabe_in_kurs
+CREATE VIEW Note_nach_Leistungstyp AS
+SELECT fk_kurs,fk_matnr,fk_leistungstyp, FORMAT(AVG(wert),1) AS Note, gewichtung
+FROM leistung
+JOIN abgabe_in_kurs ON abgabe_in_kurs.id = leistung.fk_abgabe_in_kurs
 JOIN leistung_template ON leistung_template.id = abgabe_in_kurs.fk_leistung_template
-WHERE abgabe_in_kurs.fk_kurs = 1
-GROUP BY
-    abgabe_in_kurs.fk_leistung_template
-HAVING
-    COUNT(leistung.fk_matnr) < 1;
+GROUP By fk_leistungstyp, fk_matnr, gewichtung, fk_leistung_template, fk_kurs;
+
 
 
 
 ##Student, Dozent: Welches Team hat Aufgabe XY bearbeitet (Team, Studenten, Aufgabe)?
-#TODO Eingrenzung auf  erbrachte Leistung
+#TODO Eingrenzung auf  erbrachte Leistung Corentin
 SELECT
     id AS Aufgabe,
     fk_team AS Team,
@@ -309,7 +251,7 @@ WHERE
 
 
 ##Student (nur eigener Kurs), Dozent: Welche Studenten sind in Kurs XY?
-#TODO View ändern
+#TODO View ändern Corentin
 SELECT
     fk_kurs,
     matnr,
@@ -325,6 +267,7 @@ WHERE
 
 
 ##Student (nur er selbst), Dozent: Welche Leistungen hat Student XY bisher erbracht?
+##TODO View anpassen Corentin
 SELECT
     wert,
     frist_verlaengerung_tage,
@@ -337,22 +280,10 @@ WHERE
 
 
 
-##Student (nur er selbst), Dozent: Mit welcher Verspätung wurde Leistung XY abgegeben (Leistung, Template, Kurs)?
-#TODO frist berechnen siehe obene Funktion
-SELECT
-    id,
-    frist_verlaengerung_tage,
-    fk_kurs,
-    fk_leistung_template
-FROM
-    leistung_mit_kurs
-WHERE
-    id = 1;
-
 
 
 ##Student: Wieviel Zeit bleibt für die Abgabe einer Leistung nur eigene Latedays
-#TODO in Funktion auslagern
+#TODO in Funktion auslagern Corentin
 SELECT
     (
         DATEDIFF(
@@ -416,7 +347,7 @@ WHERE
 
 
 ##Student: Wieviel Zeit bleibt für die Abgabe einer Leistung mit LateDays der Gruppenmitglieder
-#TODO siehe oben in Funktion dann statt CURDATE() date übergeben
+#TODO siehe oben in Funktion dann statt CURDATE() date übergeben Corentin
 SELECT
     (
         DATEDIFF(
@@ -491,60 +422,21 @@ WHERE
 
 
 
-## Student, Dozent: Welche Durchschnittsnote inkl. Berücksichtigung der Gewichtung hat Student XY?
-#TODO View ändern
-SELECT
-    fk_matnr,
-    fk_kurs,
-    SUM(Note) AS 'KursNote'
-FROM
-    (
-    SELECT
-        fk_matnr,
-        fk_kurs,
-        AVG(wert) * leistung_mit_kurs.gewichtung AS 'Note'
-    FROM
-        leistung_mit_kurs
-    WHERE
-        fk_matnr = 123456 AND fk_kurs = 3
-    GROUP BY
-        fk_kurs,
-        id
-) AS KategorieNoten
-GROUP BY
-    fk_matnr,
-    fk_kurs;
 
 
 
-##Dozent: Welche Durchschnittsnote wurde in einem Kurs für ein bestimmtes Leistungstemplate erreicht?
-#TODO View ändern
-SELECT
-    fk_leistung_template,
-    fk_leistungstyp,
-    latedays,
-    gewichtung,
-    teiler,
-    AVG(wert) AS 'Durchschnittsnote'
-FROM
-    leistung_mit_kurs
-WHERE
-    fk_kurs = 3
-GROUP BY
-    fk_leistung_template;
 
 
 
 ##Student, Dozent: Welche aktiven Mitarbeiten hat Student XY in einem Kurs erbracht?
-#TODO View ändern, redundanz fixen
-SELECT
-    bezeichnung,
-   zeitpunkt,
-    nachweis
-FROM
-    aktive_mitarbeit_mit_kurs_und_student
-WHERE
-   fk_matnr = 123456 AND fk_kurs = 1;
+CREATE VIEW aktive_mitarbeit_von_studenten AS
+    SELECT fk_kurs, fk_matnr, vorname, nachname, bezeichnung, zeitpunkt
+FROM aktive_mitarbeit_in_kurs ak
+JOIN aktive_mitarbeit am on am.id = ak.fk_aktive_mitarbeit
+JOIN student s on ak.fk_matnr = s.matnr
+JOIN person p on s.fk_mail = p.mail
+ORDER BY zeitpunkt;
+
 
 
 
@@ -561,27 +453,9 @@ ORDER BY
 
 
 
-##Dozent: Welche Studenten bekommen Abzug (und wieviel) wegen überschrittener Latedays?
-#TODO test
-SELECT
-    fk_matnr,
-    (
-        0 - latedays_verfuegbar + SUM(frist_verlaengerung_tage)
-    ) AS Abzug_in_Prozent
-FROM
-    leistung_mit_kurs
-WHERE
-    fk_kurs = 1
-GROUP BY
-    fk_kurs,
-    fk_matnr
-HAVING
-    Abzug_in_Prozent > 0;
-
-
-
 
 ##Student: Fristen
+## TODO nicht auf große View
 SELECT
 	KursID,
     fk_leistungstyp,
@@ -642,8 +516,9 @@ VALUES(
 
 
 ##insert (student): Aktive Mitarbeit
-START TRANSACTION
-    ;
+DELIMITER $$
+create procedure insertAktiveMitarbeit (Matrikelnummer int, Kurs_ID int, Zeitpunkt date, Nachweis char(255), Bezeichnung char(255))
+Begin
 INSERT INTO aktive_mitarbeit(
     id,
     zeitpunkt,
@@ -652,18 +527,17 @@ INSERT INTO aktive_mitarbeit(
 )
 VALUES(
     NULL,
-    '2021-11-17 08:52:55.000000',
-    'test',
-    'ad'
+    Zeitpunkt,
+    Nachweis,
+    Bezeichnung
 );
 INSERT INTO aktive_mitarbeit_in_kurs(
     fk_matnr,
     fk_kurs,
     fk_aktive_mitarbeit
 )
-VALUES(123456, 3, LAST_INSERT_ID());
-COMMIT
-    ;
+VALUES(Matrikelnummer, Kurs_ID, LAST_INSERT_ID());
+End $$
 
 ##insert, update, delete (Student): Team (nur eigenes oder delete trigger wenn keine Mitglieder)
 INSERT INTO team(id, max_mitglieder, kommentar)
@@ -715,7 +589,8 @@ WHERE
 INSERT INTO `anfrageaufnahme` (`fk_kurs`, `fk_matnr`) VALUES ('6', '383940');
 
 ## Beitrittsanfrage für einen Kurs annehmen
-START Transmission;
-DELETE FROM `anfrageaufnahme` WHERE fk_kurs = 6 AND fk_matnr = 383940;
-INSERT INTO `student_in_kurs`(`fk_kurs`, `fk_matnr`, `fk_zugriffsrechte`) VALUES ('6','383940','urw');
-COMMIT;
+create procedure acceptStudent (Matrikelnummer int, Kurs_ID int, Rechte char(3))
+Begin
+DELETE FROM `anfrageaufnahme` WHERE fk_kurs = Kurs_ID AND fk_matnr = Matrikelnummer;
+INSERT INTO `student_in_kurs`(`fk_kurs`, `fk_matnr`, `fk_zugriffsrechte`) VALUES (Kurs_ID,Matrikelnummer,Rechte);
+End $$
