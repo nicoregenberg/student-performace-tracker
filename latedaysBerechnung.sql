@@ -1,4 +1,4 @@
-USE performancetracker;
+USE performacetrackerhwr;
 -- für Steini ^^
 
 -- Wird weiter unten benutzt und in der Prozedur resettet.
@@ -61,7 +61,7 @@ SELECT p.id, p.fk_leistungstyp, p.latedays, p.fk_matnr, p.fk_kurs, round_days_di
         JOIN leistung l on a.id = l.fk_abgabe_in_kurs
         JOIN leistung_template lt on a.fk_leistung_template = lt.id)
         p) k
-WHERE difference < 0
+-- WHERE difference < 0
 GROUP BY fk_leistungstyp, fk_matnr, fk_kurs;
 
 -- Entscheidung für Backendübergabe und wichtig: Reset der globalen Variable latedaysused
@@ -99,7 +99,7 @@ CREATE FUNCTION berechne_latedays_aggregiert (p_course_id INT, p_mat_nr INT, p_l
 			ELSE
 				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr AND fk_leistungstyp = p_leistungstyp);
 			End IF;
-        ELSE 
+        ELSE
 			IF p_course_id = -1 AND p_mat_nr = -1 THEN
 				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays );
 			ELSEIF p_course_id = -1 THEN
