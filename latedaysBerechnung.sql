@@ -10,6 +10,7 @@ DELIMITER //
 DROP FUNCTION IF EXISTS round_days_diff //
 CREATE FUNCTION round_days_diff (frist DATETIME, datum_ist DATETIME)
     RETURNS INT
+    DETERMINISTIC
     BEGIN
         DECLARE days_diff INT;
         SET days_diff = DATEDIFF(frist, datum_ist);
@@ -17,7 +18,7 @@ CREATE FUNCTION round_days_diff (frist DATETIME, datum_ist DATETIME)
             SET days_diff = days_diff - 1;
         END IF;
         RETURN days_diff;
-    END;
+    END //
 DELIMITER ;
 
 -- Berechnung der Latedays anhand der gesamtverfügbaren,
@@ -26,6 +27,7 @@ DELIMITER //
 DROP FUNCTION IF EXISTS increment_used_latedays //
 CREATE FUNCTION increment_used_latedays (diff INT, latedays INT, courseId INT)
     RETURNS INT
+    DETERMINISTIC
     BEGIN
         DECLARE ld_temp INT;
         DECLARE max_ld INT;
@@ -43,7 +45,7 @@ CREATE FUNCTION increment_used_latedays (diff INT, latedays INT, courseId INT)
             SET ld_temp = ld_temp - (@latedaysUsed - max_ld);
         END IF;
         RETURN ld_temp;
-    END;
+    END //
 DELIMITER ;
 
 -- Erstellung der View die den Aufrufen zugrundeliegt
@@ -76,7 +78,7 @@ CREATE PROCEDURE berechne_latedays (p_course_id INT, p_mat_nr INT)
         ELSE
             SELECT * FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
         END IF;
-    END;
+    END //
 DELIMITER ;
 
 call berechne_latedays(-1, -1);     -- alle Kurse, alle Studenten
