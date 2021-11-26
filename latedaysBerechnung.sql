@@ -1,10 +1,5 @@
-USE performancetracker;
--- für Steini ^^
-
--- Wird weiter unten benutzt und in der Prozedur resettet.
--- Aufruf nur der View resettet die Variable nicht und führt
--- zu falschen Ergebnissen
-SET @`latedaysUsed` = 0;
+USE performacetrackerhwr;
+-- für Steini 2.0 ^^
 
 -- Korrektur der Tageberechnung in Datediff
 DELIMITER //
@@ -20,116 +15,108 @@ CREATE FUNCTION round_days_diff (frist DATETIME, datum_ist DATETIME)
         END IF;
         RETURN days_diff;
     END //
-DELIMITER ;
 
--- Berechnung der Latedays anhand der gesamtverfügbaren,
--- der für die Leistung verfügbaren und der Härtefalltage
-DELIMITER //
-DROP FUNCTION IF EXISTS increment_used_latedays //
-CREATE FUNCTION increment_used_latedays (diff INT, latedays INT, courseId INT)
+DROP FUNCTION IF EXISTS calc_malus_leistung //
+CREATE FUNCTION calc_malus_leistung (diff INT, latedays_leistung INT)
     RETURNS INT
     DETERMINISTIC
     BEGIN
-        DECLARE ld_temp INT;
-        DECLARE max_ld INT;
-        SET max_ld = (SELECT latedays_verfuegbar FROM kurs WHERE id = courseId);
-        IF @latedaysUsed >= max_ld THEN
-            SET ld_temp = diff;
-        ELSEIF diff + latedays > 0 THEN
-            SET @latedaysUsed = @latedaysUsed - diff;
-            SET ld_temp = 0;
+        IF latedays_leistung + diff < 0 THEN
+            RETURN latedays_leistung + diff;
         ELSE
-            SET @latedaysUsed = @latedaysUsed + latedays;
-            SET ld_temp = diff + latedays;
+            RETURN 0;
         END IF;
-        IF @latedaysUsed > max_ld THEN
-            SET ld_temp = ld_temp - (@latedaysUsed - max_ld);
-        END IF;
-        RETURN ld_temp;
     END //
-DELIMITER ;
 
--- Erstellung der View die den Aufrufen zugrundeliegt
-DROP VIEW IF EXISTS berechnete_latedays;
-CREATE VIEW berechnete_latedays AS
-SELECT k.id as abgabe_id, fk_matnr, fk_kurs, SUM(increment_used_latedays(difference, latedays, fk_kurs)) as latedays_verrechnet, fk_leistungstyp FROM (
-SELECT p.id, p.fk_leistungstyp, p.latedays, p.fk_matnr, p.fk_kurs, round_days_diff(p.frist, p.abgabe_ist) + frist_verlaengerung_tage
-    AS difference
-    FROM (
-        SELECT frist, abgabe_ist, frist_verlaengerung_tage, fk_leistungstyp, latedays, fk_matnr, fk_kurs, a.id
-        FROM abgabe_in_kurs a
-        JOIN leistung l on a.id = l.fk_abgabe_in_kurs
-        JOIN leistung_template lt on a.fk_leistung_template = lt.id)
-        p) k
-WHERE difference < 0
-GROUP BY fk_leistungstyp, fk_matnr, fk_kurs;
-
--- Entscheidung für Backendübergabe und wichtig: Reset der globalen Variable latedaysused
-DELIMITER //
-DROP PROCEDURE IF EXISTS berechne_latedays //
-CREATE PROCEDURE berechne_latedays (IN p_course_id INT, IN p_mat_nr INT)
+DROP FUNCTION IF EXISTS calc_latedaysUsed //
+CREATE FUNCTION calc_latedaysUsed (diff INT, latedays_leistung INT)
+    RETURNS INT
+    DETERMINISTIC
     BEGIN
-        SET @latedaysUsed = 0;
-        IF p_course_id = -1 AND p_mat_nr = -1 THEN
-            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays;
-        ELSEIF p_course_id = -1 THEN
-            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays WHERE fk_matnr = p_mat_nr;
-        ELSEIF p_mat_nr = -1 THEN
-            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays WHERE fk_kurs = p_course_id;
+        IF latedays_leistung + diff >= 0 THEN
+            RETURN diff * -1;
         ELSE
-            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
+            RETURN latedays_leistung;
+        END IF;
+    END //
+
+DROP FUNCTION IF EXISTS calc_latedays_left_total //
+CREATE FUNCTION calc_latedays_left_total (ld_used INT, ld_available INT)
+    RETURNS INT
+    DETERMINISTIC
+    BEGIN
+        IF ld_available - ld_used >= 0 THEN
+            RETURN ld_available - ld_used;
+        ELSE
+            RETURN 0;
         END IF;
     END //
 DELIMITER ;
 
+DELIMITER //
+DROP FUNCTION IF EXISTS aggregate_latedays //
+CREATE FUNCTION aggregate_latedays (ld_used INT, ld_available INT, penalty INT)
+    RETURNS INT
+    DETERMINISTIC
+    BEGIN
+        IF ld_available - ld_used < 0 THEN
+            RETURN ld_available - ld_used + penalty;
+        ELSE
+            RETURN penalty;
+        END IF;
+    END //
+DELIMITER ;
+
+-- Strafe auf Note inkl aller Variablen
 DELIMITER //
 DROP FUNCTION IF EXISTS berechne_latedays_aggregiert //
-CREATE FUNCTION berechne_latedays_aggregiert (p_course_id INT, p_mat_nr INT, p_leistungstyp CHAR(30))
+CREATE FUNCTION berechne_latedays_aggregiert (p_course_id INT, p_mat_nr INT)
     RETURNS INT
     DETERMINISTIC
     BEGIN
-        SET @latedaysUsed = 0;
-        IF p_leistungstyp <> '-1' THEN
-			IF p_course_id = -1 AND p_mat_nr = -1 THEN
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_leistungstyp = p_leistungstyp);
-			ELSEIF p_course_id = -1 THEN
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_matnr = p_mat_nr AND fk_leistungstyp = p_leistungstyp);
-			ELSEIF p_mat_nr = -1 THEN
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id  AND fk_leistungstyp = p_leistungstyp);
-			ELSE
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr AND fk_leistungstyp = p_leistungstyp);
-			End IF;
-        ELSE 
-			IF p_course_id = -1 AND p_mat_nr = -1 THEN
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays );
-			ELSEIF p_course_id = -1 THEN
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_matnr = p_mat_nr );
-			ELSEIF p_mat_nr = -1 THEN
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id) ;
-			ELSE
-				RETURN (SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr );
-			End IF;
+        DECLARE penalty INT;
+        SET penalty = (SELECT SUM(aggregate_latedays(VerbrauchteLD, latedays_verfuegbar, Malus))
+            FROM latedays_merged_overvies
+            WHERE fk_matnr = p_mat_nr
+            AND kurs_id = p_course_id
+            GROUP BY fk_matnr);
+        IF penalty IS NULL THEN
+            RETURN 0;
+        ELSE
+            RETURN penalty;
         END IF;
     END //
 DELIMITER ;
 
-DELIMITER //
-DROP PROCEDURE IF EXISTS berechne_latedays_team //
-CREATE PROCEDURE berechne_latedays_team (IN p_abgabeid INT, p_team INT)
-    BEGIN
-        SET @latedaysUsed = 0;
-        SELECT MIN(latedays_verrechnet) FROM berechnete_latedays bl
-JOIN student_in_team st on st.fk_matnr = bl.fk_matnr
-WHERE st.fk_team = p_team  and bl.abgabe_id = p_abgabeid;
-    END //
-DELIMITER ;
+    -- View mit Übersicht aller Latedays Variablen
+    DROP VIEW latedays_merged_overvies;
+    CREATE VIEW latedays_merged_overvies AS (
+    SELECT kurs_id, abgabe_id, k.fk_matnr, k.fk_team, k.latedays_verfuegbar, fk_leistungstyp,
+           calc_latedaysUsed(difference, latedays) AS VerbrauchteLD,
+           calc_malus_leistung(difference, latedays) AS Malus
+    FROM (
+        SELECT p.fk_leistungstyp, p.fk_team, abgabe_id, kurs_id, p.fk_matnr, p.latedays, p.latedays_verfuegbar,
+               (round_days_diff(p.frist, p.abgabe_ist) + frist_verlaengerung_tage)
+            AS difference
+            FROM (
+                SELECT frist, abgabe_ist, fk_matnr, l.fk_team, latedays_verfuegbar, frist_verlaengerung_tage,
+                       fk_leistungstyp, latedays, k2.id as kurs_id, a.id as abgabe_id
+                FROM abgabe_in_kurs a
+                JOIN leistung l on a.id = l.fk_abgabe_in_kurs
+                JOIN leistung_template lt on a.fk_leistung_template = lt.id
+                JOIN kurs k2 on a.fk_kurs = k2.id)
+            p)
+        k WHERE difference < 0);
 
-SET @latedaysused = 0 ;
-SELECT * from berechnete_latedays;
+-- Testaufruf zum Vergleichen
+SELECT latedays_verfuegbar as latedayskurs, VerbrauchteLD, latedays_verfuegbar - VerbrauchteLD as latedaysuebrig, Malus,
+       aggregate_latedays(VerbrauchteLD, latedays_verfuegbar, Malus) as finaler_abzug
+    FROM latedays_merged_overvies;
 
-call berechne_latedays(-1, -1);     -- alle Kurse, alle Studenten, latedays zusammengefasst
-call berechne_latedays(1, -1);      -- Kurs 1, alle Studenten, latedays zusammengefasst
-call berechne_latedays(-1, 123456); -- alle Kurse, Student 123456, latedays zusammengefasst
-call berechne_latedays(3, 123456);  -- Kurs 1, Student 123456, latedays zusammengefasst
-SELECT round_days_diff ('2021-11-01', '2021-11-26') + berechne_latedays_aggregiert (1, 123456, 'Arbeitsblatt') AS 'Verbleibende Tage'; -- verbleibende Zeit nach kurs, matn und Leistungstyp
-call berechne_latedays_team (1,1); -- verbleibende zeit nach Abgabe und Team
+-- Abruf Abgabe mit Frist und noch min verfügbaren Latedays in Team
+SELECT MIN(l.latedaysuebrig), l.frist FROM (
+SELECT calc_latedays_left_total(VerbrauchteLD, latedays_verfuegbar) as latedaysuebrig, ak.frist
+    FROM latedays_merged_overvies lo
+JOIN abgabe_in_kurs ak ON ak.id = lo.abgabe_id
+WHERE fk_team = 1 AND kurs_id = 1) l;
+
