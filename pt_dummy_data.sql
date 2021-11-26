@@ -1,4 +1,4 @@
-USE performancetracker;
+USE performancetrackerhwr;
 
 INSERT INTO kurs_buchstabe (wert)
 VALUES
@@ -42,7 +42,6 @@ VALUES
     (6, 'The Big Beer Theory'),
     (6, null),
     (6, 'Stuzubis'),
-    (6, null),
     (2, 'Just married');
 
 INSERT INTO person (mail, vorname, nachname)
@@ -169,16 +168,19 @@ VALUES
 INSERT INTO kurs (beschreibung, fk_jahrgang, fk_kurs_buchstabe, fk_modul, modul_gewichtung, latedays_verfuegbar)
 VALUES
     ('Einführung DB', 3, 'C', 2, 1, 0),
-    ('Einführung BWL', 3, 'C', 1, 1, 0),
+    ('Einführung BWL', 3, 'C', 4, 1, 0),
     ('Einführung OOP', 3, 'C', 3, 1, 6),
     ('Einführung OOP', 4, 'A', 3, 1, 3),
     ('Softwarearchitektur', 3, 'C', 3, 1, 6),
+    ('Softwarearchitektur', 4, 'A', 3, 1, 6)
     ('Mathematik für Ingenieure', 3, 'C', 6, 1, 0),
     ('theoretische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 9),
     ('praktische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 5),
     ('theoretische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 6),
     ('praktische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 4);
 
+
+##neu machen
 INSERT INTO student_in_kurs (fk_kurs, fk_matnr, fk_zugriffsrechte)
 VALUES
     (3, 262728, 'kwd'), (3, 293031, 'kwd'), (3, 323334, 'urw'), (3, 353637, 'urw'),
@@ -191,7 +193,7 @@ VALUES
     (2, 505152, 'urw'), (2, 535455, 'urw'), (2, 565758, 'urw'), (2, 596061, 'urw'),
     (1, 262728, 'kwd'), (1, 293031, 'urw'), (1, 323334, 'urw'), (1, 353637, 'urw'),
     (1, 383940, 'kwd'), (1, 414243, 'urw'), (1, 444546, 'urw'), (1, 474849, 'urw'),
-    (5, 223340, 'kwd'), (6, 223340, 'urw'), (7, 223340, 'urw'), (8, 223340, 'urw'),
+    (7, 223340, 'urw'), (8, 223340, 'urw'), (3, 789010, 'urw'),
     (9, 223341, 'urw'), (10, 223341, 'urw'), (5, 223341, 'urw'), (6, 223341, 'urw'),
     (7, 223342, 'urw'), (8, 223342, 'urw'), (9, 223342, 'urw'), (10, 223342, 'urw'),
     (5, 223343, 'urw'), (6, 223343, 'urw'), (7, 223343, 'urw'), (8, 223343, 'urw'),
@@ -210,8 +212,7 @@ VALUES
     (9, 223357, 'urw'), (10, 223357, 'urw'), (5, 223357, 'urw'), (6, 223357, 'urw'),
     (7, 223358, 'urw'), (8, 223358, 'urw'), (9, 223358, 'urw'), (10, 223358, 'urw'),
     (7, 223359, 'urw'), (8, 223359, 'urw'), (9, 223359, 'urw'), (10, 223359, 'urw'),
-    (2, 123456, 'urw'), (1, 123456, 'urw'), (1, 171819, 'urw'), (2, 789010, 'urw'),
-    (3, 789010, 'urw');
+    (2, 123456, 'urw'), (1, 123456, 'urw'), (1, 171819, 'urw'), (2, 789010, 'urw');
 
 INSERT INTO dozent_in_kurs (fk_zugriffsrecht, fk_mail, fk_kurs)
 VALUES
@@ -249,6 +250,8 @@ VALUES
     ('Vortrag',         0,  0.60,  2),
     ('Projektarbeit',   7,  1.00,  1);
 
+
+##neu machen
 INSERT INTO abgabe_in_kurs (frist, fk_leistung_template, fk_kurs, teamarbeit_max_erlaubt)
 VALUES
     (STR_TO_DATE('01.10.21','%d.%m.%y'), 2, 1, 3),
@@ -326,6 +329,7 @@ VALUES
     (STR_TO_DATE('01.11.21','%d.%m.%y'), 4, 10, 4),
     (STR_TO_DATE('01.12.21','%d.%m.%y'), 10, 10, 1);
 
+##neu machen
 INSERT INTO aktive_mitarbeit (zeitpunkt, nachweis, bezeichnung)
 VALUES
     (STR_TO_DATE('14.11.21 11:20','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
@@ -337,6 +341,7 @@ VALUES
     (STR_TO_DATE('21.12.21 10:30','%d.%m.%y %H:%i'), 'Vortrag Präsenz', 'Vorstellung Gruppenstatus'),
     (STR_TO_DATE('18.10.21 22:22','%d.%m.%y %H:%i'), 'www.one.google.com/ddhfhrg56647474hfhghfhfhfhf7939857345hwfkjsdf', 'Zusatzaufgabe ERM');
 
+##neu machen
 INSERT INTO aktive_mitarbeit_in_kurs (fk_matnr, fk_kurs, fk_aktive_mitarbeit)
 VALUES
     (123456, 1, 1), (789010, 1, 1), (789010, 1, 2),
@@ -346,6 +351,7 @@ VALUES
     (223345, 9, 5), (223357, 10, 6), (141516, 4, 5),
     (262728, 3, 4);
 
+##neu machen
 INSERT INTO leistung (fk_matnr, wert, fk_abgabe_in_kurs, abgabe_ist, frist_verlaengerung_tage, fk_team, festgesetzt)
 VALUES
     (123456, 1.0, 1, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
@@ -358,46 +364,44 @@ VALUES
     (789010, 1.0, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
     (789010, 2.0, 35, STR_TO_DATE('01.11.21 00:04','%d.%m.%y %H:%i'), 0, null, false),
     (789010, 1.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223340, 1.0, 41, STR_TO_DATE('02.10.21 11:21','%d.%m.%y %H:%i'), 0, 1, false),
-    (223340, 2.0, 45, STR_TO_DATE('01.11.21 23:39','%d.%m.%y %H:%i'), 0, 1, false),
-    (223340, 1.5, 52, STR_TO_DATE('01.12.21 00:51','%d.%m.%y %H:%i'), 1, 1, false),
+    (223340, 1.5, 52, STR_TO_DATE('01.12.21 00:51','%d.%m.%y %H:%i'), 1, 6, false),
     (223340, 3.0, 59, STR_TO_DATE('01.11.21 00:31','%d.%m.%y %H:%i'), 0, null, false),
-    (223343, 3.7, 42, STR_TO_DATE('01.12.21 00:51','%d.%m.%y %H:%i'), 0, null, false),
-    (223343, 2.0, 44, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223343, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223343, 1.0, 58, STR_TO_DATE('01.12.21 00:11','%d.%m.%y %H:%i'), 1, 1, false),
+    (223343, 3.7, 42, STR_TO_DATE('01.12.21 00:51','%d.%m.%y %H:%i'), 0, 8, false),
+    (223343, 2.0, 44, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 8, false),
+    (223343, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 8, false),
+    (223343, 1.0, 58, STR_TO_DATE('01.12.21 00:11','%d.%m.%y %H:%i'), 1, 8, false),
     (223346, 2.0, 43, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223346, 1.7, 48, STR_TO_DATE('01.12.21 00:51','%d.%m.%y %H:%i'), 0, null, false),
-	(223346, 1.0, 55, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223346, 2.0, 63, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
+	(223346, 1.0, 55, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 10, false),
+    (223346, 2.0, 63, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 10, false),
     (223349, 3.7, 43, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223349, 2.0, 48, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223349, 2.3, 55, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223349, 1.0, 63, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
-    (223341, 1.5, 38, STR_TO_DATE('01.12.21 03:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223349, 2.0, 48, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 11, false),
+    (223349, 2.3, 55, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 11, false),
+    (223349, 1.0, 63, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, null, false),
+    (223341, 1.5, 38, STR_TO_DATE('01.12.21 03:01','%d.%m.%y %H:%i'), 1, 7, false),
     (223341, 3.0, 44, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223341, 3.7, 64, STR_TO_DATE('01.12.21 01:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223341, 2.0, 71, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-	(223347, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223347, 2.0, 46, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223347, 1.0, 67, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223347, 2.0, 74, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223342, 1.5, 50, STR_TO_DATE('01.12.21 05:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223341, 2.0, 71, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 7, false),
+	(223347, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 10, false),
+    (223347, 2.0, 46, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (223347, 1.0, 67, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 10, false),
+    (223347, 2.0, 74, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (223342, 1.5, 50, STR_TO_DATE('01.12.21 05:01','%d.%m.%y %H:%i'), 1, 7, false),
     (223342, 3.0, 63, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223342, 3.7, 65, STR_TO_DATE('01.12.21 15:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223342, 2.0, 74, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223345, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223345, 1.0, 57, STR_TO_DATE('01.12.21 04:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223342, 2.0, 74, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 7, false),
+    (223345, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (223345, 1.0, 57, STR_TO_DATE('01.12.21 04:01','%d.%m.%y %H:%i'), 1, 10, false),
     (223345, 2.0, 66, STR_TO_DATE('01.11.21 09:01','%d.%m.%y %H:%i'), 0, null, false),
     (223345, 1.7, 73, STR_TO_DATE('01.12.21 08:01','%d.%m.%y %H:%i'), 0, null, false),
-	(223348, 1.0, 53, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223348, 2.0, 58, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223348, 1.5, 68, STR_TO_DATE('01.12.21 02:01','%d.%m.%y %H:%i'), 1, 1, false),
+	(223348, 1.0, 53, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 11, false),
+    (223348, 2.0, 58, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 11, false),
+    (223348, 1.5, 68, STR_TO_DATE('01.12.21 02:01','%d.%m.%y %H:%i'), 1, 11, false),
     (223348, 3.0, 72, STR_TO_DATE('01.11.21 03:01','%d.%m.%y %H:%i'), 0, null, false),
     (223349, 3.7, 55, STR_TO_DATE('01.12.21 03:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223349, 2.0, 57, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223349, 2.3, 70, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223349, 1.0, 71, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223349, 2.0, 57, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 11, false),
+    (223349, 2.3, 70, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 11, false),
+    (223349, 1.0, 71, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 11, false),
     (123456, 1.0, 1, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
     (123456, 2.0, 2, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
     (123456, 1.5, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
@@ -408,49 +412,46 @@ VALUES
     (789010, 1.0, 3, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
     (789010, 2.0, 35, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (789010, 1.7, 36, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-	(223350, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223350, 2.0, 45, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223350, 1.5, 52, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+	(223350, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 11, false),
+    (223350, 2.0, 45, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 11, false),
+    (223350, 1.5, 52, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 11, false),
     (223350, 3.0, 59, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223353, 3.7, 42, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223353, 2.0, 44, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223353, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223353, 1.0, 58, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223353, 2.0, 44, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 13, false),
+    (223353, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 13, false),
+    (223353, 1.0, 58, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 13, false),
     (223356, 2.0, 43, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223356, 1.7, 48, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-	(223356, 1.0, 55, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223356, 2.0, 63, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223351, 1.5, 38, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+	(223356, 1.0, 55, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 15, false),
+    (223356, 2.0, 63, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 15, false),
+    (223351, 1.5, 38, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 12, false),
     (223351, 3.0, 44, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223351, 3.7, 64, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223351, 2.0, 71, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223354, 2.3, 39, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223354, 1.0, 45, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223351, 2.0, 71, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 12, false),
+    (223354, 2.3, 39, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 14, false),
+    (223354, 1.0, 45, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 14, false),
     (223354, 2.0, 66, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223354, 1.7, 72, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-	(223357, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223357, 2.0, 46, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223357, 1.0, 67, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223357, 2.0, 74, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223352, 1.5, 50, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+	(223357, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 15, false),
+    (223357, 2.0, 46, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 15, false),
+    (223357, 1.0, 67, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 15, false),
+    (223357, 2.0, 74, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 15, false),
+    (223352, 1.5, 50, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 12, false),
     (223352, 3.0, 63, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223352, 3.7, 65, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223352, 2.0, 74, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223355, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223355, 1.0, 57, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+    (223352, 2.0, 74, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 12, false),
+    (223355, 2.3, 52, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 15, false),
+    (223355, 1.0, 57, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 15, false),
     (223355, 2.0, 66, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223355, 1.7, 73, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-	(223358, 1.0, 53, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223358, 2.0, 58, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223358, 1.5, 68, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
+	(223358, 1.0, 53, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 16, false),
+    (223358, 2.0, 58, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 16, false),
+    (223358, 1.5, 68, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 16, false),
     (223358, 3.0, 72, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223359, 3.7, 55, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223359, 2.0, 57, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223359, 2.3, 70, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223359, 1.0, 71, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false);
-
-
-
+    (223359, 2.0, 57, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 16, false),
+    (223359, 2.3, 70, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 16, false),
+    (223359, 1.0, 71, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 16, false);
 
 
 INSERT INTO `account` (`fk_mail`, `password_hash`) VALUES
@@ -500,11 +501,11 @@ INSERT INTO `account` (`fk_mail`, `password_hash`) VALUES
     ('wdmitrh@flavors.me', '40fd382c4117e7be6db10152fa1c329d263cc528443ff1cfc2c9636f3fa82784'),
     ('dedwickei@nih.gov', '77d014019c19aba92c3b4d801dec5395eada013f1a3a9c00587745966ae027cd');
 
-
+##neu machen
 INSERT INTO `anfrageaufnahme` (`fk_kurs`, `fk_matnr`) VALUES
+(6, 223340),
+(5, 223350),
+(5, 223346),
+(5, 223356),
 (5, 565758),
-(5, 123456),
-(5, 596061),
-(5, 596061),
-(5, 262728),
-(5, 383940);
+(5, );
