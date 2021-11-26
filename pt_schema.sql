@@ -67,6 +67,7 @@ create table kurs
 	fk_jahrgang int not null,
 	fk_kurs_buchstabe char not null,
 	fk_modul int not null,
+	modul_gewichtung decimal(3,2) NOT NuLL,
 	latedays_verfuegbar smallint null,
 	constraint kurs_ibfk_1
 		foreign key (fk_jahrgang) references jahrgang (id) on delete cascade on update cascade,
@@ -244,4 +245,4 @@ create index kurs_id
 
 create index student_matnr
 	on aktive_mitarbeit_in_kurs (fk_matnr);
-
+    
