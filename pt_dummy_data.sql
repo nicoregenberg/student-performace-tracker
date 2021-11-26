@@ -487,8 +487,26 @@ INSERT INTO `account` (`fk_mail`, `password_hash`) VALUES
 ('stud.the.joker@hwr.de', '17e492be914fecdf07c268c9290793fbdb1826436ce21c2221eff4b6dc51b891'),
 ('stud.tony.montana@hwr.de', '74f476e0d8f671ca46fe6be4d7b71327092b6af0e81572d19c1ddfec70da7b14'),
 ('stud.vito.corleone@hwr.de', 'aec95a56259c02c3719a4a10872c054111e98b834b651a68c99e1f8a0ea7d714'),
-('stud.über.schätzt@hwr.de', 'ddafe91ee665547f9694ae027583a6cd7d2c1c72883711816ecd2eb11ebcb8c5');
-
+('stud.über.schätzt@hwr.de', 'ddafe91ee665547f9694ae027583a6cd7d2c1c72883711816ecd2eb11ebcb8c5'),
+('mcopin0@spiegel.de', '3ec326615b5538d1df5e60a4e4a11c496e52eed9e65a9448e85edc0926794d6e'),
+('sbangs1@fastcompany.com','64800a01060ef108ee758d3f8519b961bbc9d1ccd866037b38ac774b49db896d'),
+('aellacombe2@skyrock.com', '9912ee93bfa9b16d2f60e01e8c6bcd473abdceb9be6b1e7659399dfeb5a8f696'),
+('ayerrall3@yahoo.co.jp', '6c9bdcda35ce78c90cb6efa43e5be618fb441ae990673ad5baafd77c4f5a72e5'),
+('jmatley4@weebly.com', 'ce78800b36f7fc1158f591a255f85d57315a38c27c36d33aeb525a475ab5bc33'),
+('zsabey5@businesswire.com', 'b1ca38f6438feec61adad28fad98d1f0365921b4e3aed6e90de97c80afe9e0f5'),
+('lhinkens6@furl.net', '4be4df28a26d604ba04912eb5b7909b83728a593d6e871295bf2b9c26b224c3b'),
+('bhellewell7@1und1.de', '8110b120c7a20bdfb325a235f6806dadb2c8e5d843e35dcd158b427382c01ad4'),
+('zsanton8@tinypic.com', '3baac0a9979fc9496278a61c07fa4194d508778f4b535cc8b56e5f64b6582edd'),
+('mspark9@ucoz.com', '49ab09ed771dd5eb6f8bc0be4420f92a41437b54910f4215663c9bf410457d03'),
+('asaigera@cargocollective.com', '8768fe0d97803d995d384afe7e39e4042220daf00468cd7cb870c79c116163f7'),
+('tclixbyb@state.tx.us', 'dfca1eb87a4f9def14834f64afc4d8e435bcbad0530797dc6be0d7a389af9c24'),
+('ahairec@amazon.com', 'ebfc3a5e9c9efa2090f624f520808a60ceab7ed3f6d8f14c3b777de4d8e884b6'),
+('idenisotd@themeforest.net', 'd897eff70c90cebc3e7b51b4d3dae0fe9f0d77d12f17a9fa08cc48909fe526a4'),
+('dmore@dailymail.co.uk', '092d7525e20d7c3620bf0c9141e4ab0277ba86905c0bda4a2e48c6aa4635ff78'),
+('tbranef@prweb.com', '4274e30e4551b15791b4741295f4682048a23a1cd8c44f9f08b6256445400a1a'),
+('gbanaszczykg@wordpress.org', 'aaece9ced03e00f26ddbdd755b8335e3541d84ff6a4e9812d0629155eadeb5e6'),
+('wdmitrh@flavors.me', '40fd382c4117e7be6db10152fa1c329d263cc528443ff1cfc2c9636f3fa82784'),
+('dedwickei@nih.gov', '77d014019c19aba92c3b4d801dec5395eada013f1a3a9c00587745966ae027cd');
 
 
 INSERT INTO `anfrageaufnahme` (`fk_kurs`, `fk_matnr`) VALUES
