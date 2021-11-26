@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS performacetrackerhwr;
+CREATE DATABASE IF NOT EXISTS performancetrackerhwr;
 USE performacetrackerhwr;
 
 create table aktive_mitarbeit
