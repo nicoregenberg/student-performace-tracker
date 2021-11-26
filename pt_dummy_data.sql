@@ -12,7 +12,7 @@ VALUES
 
 INSERT INTO fachrichtung (bezeichnung)
 VALUES
-    ('WI'), ('Elektrotechnik'), ('BWL');
+    ('WI'), ('Etechnik'), ('BWL');
 
 INSERT INTO modul (fk_fachrichtung, modulnummer, beschreibung)
 VALUES
@@ -21,9 +21,9 @@ VALUES
     ('WI', 301, 'Oldschool Java'),
     ('BWL', 10, 'Die Kunst, Leute zu überreden, Dinge zu kaufen, die sie nicht brauchen (Marketing)'),
     ('BWL', 12, 'Pseudowissenschaft für junge Gründer'),
-    ('Elektrotechnik', 47, 'Mathematik')
-    ('Elektrotechnik', 48, 'Regelungstechnik')
-    ('Elektrotechnik', 51, 'Halbleitertechnik');
+    ('Etechnik', 47, 'Mathematik'),
+    ('Etechnik', 48, 'Regelungstechnik'),
+    ('Etechnik', 51, 'Halbleitertechnik');
 
 INSERT INTO team (max_mitglieder, kommentar)
 VALUES
@@ -123,16 +123,16 @@ VALUES
     ('stud.fauler.sack@hwr.de', 'BWL', 171819),
     ('stud.super.streber@hwr.de', 'BWL', 202122),
     ('stud.über.schätzt@hwr.de', 'BWL', 232425),
-    ('mcopin0@spiegel.de', 'Elektrotechnik', 223340),
-    ('sbangs1@fastcompany.com', 'Elektrotechnik', 223341),
-    ('aellacombe2@skyrock.com', 'Elektrotechnik', 223342),
-    ('ayerrall3@yahoo.co.jp', 'Elektrotechnik', 223343),
-    ('jmatley4@weebly.com', 'Elektrotechnik', 22335),
-    ('zsabey5@businesswire.com', 'Elektrotechnik', 223346),
-    ('lhinkens6@furl.net', 'Elektrotechnik', 22337),
-    ('bhellewell7@1und1.de', 'Elektrotechnik', 22338),
-    ('zsanton8@tinypic.com', 'Elektrotechnik', 22339),
-    ('mspark9@ucoz.com', 'Elektrotechnik', 223350),
+    ('mcopin0@spiegel.de', 'Etechnik', 223340),
+    ('sbangs1@fastcompany.com', 'Etechnik', 223341),
+    ('aellacombe2@skyrock.com', 'Etechnik', 223342),
+    ('ayerrall3@yahoo.co.jp', 'Etechnik', 223343),
+    ('jmatley4@weebly.com', 'Etechnik', 223345),
+    ('zsabey5@businesswire.com', 'Etechnik', 223346),
+    ('lhinkens6@furl.net', 'Etechnik', 223347),
+    ('bhellewell7@1und1.de', 'Etechnik', 223348),
+    ('zsanton8@tinypic.com', 'Etechnik', 223349),
+    ('mspark9@ucoz.com', 'Etechnik', 223350),
     ('asaigera@cargocollective.com', 'WI', 223351),
     ('tclixbyb@state.tx.us', 'WI', 223352),
     ('ahairec@amazon.com', 'WI', 223353),
@@ -148,7 +148,7 @@ VALUES
     (123456, 1), (789010, 1), (111213, 1), (141516, 2), (171819, 2),
     (123456, 2), (232425, 3), (262728, 3), (293031, 3), (171819, 4),
     (123456, 4), (383940, 4), (414243, 4), (141516, 5), (223340, 6), 
-    (223341, 7), (223342, 7), (223343, 8), (223344, 9), (223345, 10), 
+    (223341, 7), (223342, 7), (223343, 8), (223345, 10), 
     (223346, 10), (223347, 10), (223348, 11), (223349, 11), (223350, 11), 
     (223351, 12), (223352, 12), (223353, 13), (223354, 14), (223355, 15), 
     (223356, 15), (223357, 15), (223358, 16), (223359, 16);
@@ -176,7 +176,7 @@ VALUES
     ('Mathematik für Ingenieure', 3, 'C', 6, 1, 0),
     ('theoretische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 9),
     ('praktische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 5),
-    ('theoretische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 6);
+    ('theoretische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 6),
     ('praktische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 4);
 
 INSERT INTO student_in_kurs (fk_kurs, fk_matnr, fk_zugriffsrechte)
@@ -195,7 +195,6 @@ VALUES
     (9, 223341, 'urw'), (10, 223341, 'urw'), (5, 223341, 'urw'), (6, 223341, 'urw'),
     (7, 223342, 'urw'), (8, 223342, 'urw'), (9, 223342, 'urw'), (10, 223342, 'urw'),   
     (5, 223343, 'urw'), (6, 223343, 'urw'), (7, 223343, 'urw'), (8, 223343, 'urw'),
-    (9, 223344, 'urw'), (10, 223344, 'urw'), (5, 223344, 'urw'), (6, 223344, 'urw'),
     (7, 223345, 'urw'), (8, 223345, 'urw'), (9, 223345, 'urw'), (10, 223345, 'urw'),
     (5, 223346, 'urw'), (6, 223346, 'urw'), (7, 223346, 'urw'), (8, 223346, 'urw'),
     (9, 223347, 'urw'), (10, 223347, 'urw'), (5, 223347, 'urw'), (6, 223347, 'urw'),
@@ -219,7 +218,7 @@ VALUES
     ('krw', 'doz.james.bond@hwr.de', 1),
     ('krd', 'doz.james.bond@hwr.de', 2),
     ('krd', 'doz.bugs.bunny@hwr.de', 3),
-    ('krd', 'doz.dorothy.gale@hwr.de', 4)
+    ('krd', 'doz.dorothy.gale@hwr.de', 4),
     ('grd', 'doz.super.man@hwr.de', 5),
     ('krd', 'doz.micky.mouse@hwr.de', 6),
     ('krw', 'doz.james.bond@hwr.de', 7),
@@ -330,7 +329,7 @@ VALUES
     (STR_TO_DATE('14.11.21 11:20','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
     (STR_TO_DATE('18.11.21 04:03','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
     (STR_TO_DATE('02.12.21 10:30','%d.%m.%y %H:%i'), 'Vortrag Präsenz', 'Vorstellung Gruppenstatus'),
-    (STR_TO_DATE('18.12.21 22:22','%d.%m.%y %H:%i'), 'www.one.google.com/ddhfhrg56647474hfhghfhfhfhf7939857345hwfkjsdf', 'Zusatzaufgabe ERM');
+    (STR_TO_DATE('18.12.21 22:22','%d.%m.%y %H:%i'), 'www.one.google.com/ddhfhrg56647474hfhghfhfhfhf7939857345hwfkjsdf', 'Zusatzaufgabe ERM'),
     (STR_TO_DATE('15.11.21 11:20','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
     (STR_TO_DATE('20.11.21 04:03','%d.%m.%y %H:%i'), 'www.moodle-forum-link.de', 'Hilfe für Gruppe Alteheim bei ÜB 2'),
     (STR_TO_DATE('21.12.21 10:30','%d.%m.%y %H:%i'), 'Vortrag Präsenz', 'Vorstellung Gruppenstatus'),
@@ -372,15 +371,11 @@ VALUES
     (223349, 3.7, 43, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223349, 2.0, 48, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
     (223349, 2.3, 55, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223349, 1.0, 63, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false)
+    (223349, 1.0, 63, STR_TO_DATE('01.12.21 00:01','%d.%m.%y %H:%i'), 1, 1, false),
     (223341, 1.5, 38, STR_TO_DATE('01.12.21 03:01','%d.%m.%y %H:%i'), 1, 1, false),
     (223341, 3.0, 44, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
     (223341, 3.7, 64, STR_TO_DATE('01.12.21 01:01','%d.%m.%y %H:%i'), 0, null, false),
     (223341, 2.0, 71, STR_TO_DATE('01.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
-    (223344, 2.3, 39, STR_TO_DATE('02.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
-    (223344, 1.0, 45, STR_TO_DATE('01.12.21 06:01','%d.%m.%y %H:%i'), 1, 1, false),
-    (223344, 2.0, 66, STR_TO_DATE('01.11.21 00:01','%d.%m.%y %H:%i'), 0, null, false),
-    (223344, 1.7, 72, STR_TO_DATE('01.12.21 12:01','%d.%m.%y %H:%i'), 0, null, false),
 	(223347, 1.0, 41, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
     (223347, 2.0, 46, STR_TO_DATE('01.11.21 23:59','%d.%m.%y %H:%i'), 0, 1, false),
     (223347, 1.0, 67, STR_TO_DATE('02.10.21 11:11','%d.%m.%y %H:%i'), 0, 1, false),
