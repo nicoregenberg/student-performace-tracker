@@ -214,14 +214,20 @@ GROUP BY fk_modul, fk_matnr;
 
 
 ##Student lässt sich offene Anfragen für Module anzeigen
-##TODO Kursname von Moodle nachbauen
-SELECT
-    fk_kurs, CONCAT(kurs.beschreibung , ' ',kurs.fk_kurs_buchstabe,' Modul ', kurs.fk_modul) AS Kurs
-FROM
-    anfrageaufnahme
-JOIN kurs ON kurs.id = anfrageaufnahme.fk_kurs
-WHERE
-    anfrageaufnahme.fk_matnr = 123456;
+##TODO Kursname von Moodle nachbauen (done)
+DROP VIEW IF EXISTS kursname_voll;
+CREATE VIEW kursname_voll AS
+SELECT kurs.id as fk_kurs_id, modul.id as fk_modul_id, CONCAT(kurs.fk_jahrgang,"-",modul.fk_fachrichtung,"-",modul.modulnummer,"-",jahrgang.sem_so_wi,"-",modul.fk_fachrichtung,jahrgang.jahr,kurs.fk_kurs_buchstabe,"/ ",person.nachname,",",person.vorname) as vollname
+FROM kurs
+JOIN modul on kurs.fk_modul = modul.id
+JOIN jahrgang on kurs.fk_jahrgang = jahrgang.id
+JOIN dozent_in_kurs on dozent_in_kurs.fk_kurs = kurs.id
+JOIN dozent on dozent_in_kurs.fk_mail = dozent.fk_person
+JOIN person on dozent.fk_person = person.mail;
+
+select kursname_voll.vollname from anfrageaufnahme
+join kursname_voll on kursname_voll.fk_kurs_id = anfrageaufnahme.fk_kurs
+where anfrageaufnahme.fk_matnr = 123456;
 
 
 
@@ -237,12 +243,9 @@ GROUP By fk_leistungstyp, fk_matnr, gewichtung, fk_leistung_template, fk_kurs;
 
 
 ##Student, Dozent: Welches Team hat Aufgabe XY bearbeitet (Team, Studenten, Aufgabe)?
-#TODO Eingrenzung auf  erbrachte Leistung Corentin
+#TODO Eingrenzung auf  erbrachte Leistung Corentin (done)
 SELECT
-    id AS Aufgabe,
-    fk_team AS Team,
-    teamKommentar,
-    Teammitglied
+    id AS Aufgabe
 FROM
    leistung_mit_team
 WHERE
@@ -251,32 +254,34 @@ WHERE
 
 
 ##Student (nur eigener Kurs), Dozent: Welche Studenten sind in Kurs XY?
-#TODO View ändern Corentin
+#TODO View ändern Corentin (done)
 SELECT
-    fk_kurs,
-    matnr,
-    vorname,
-    nachname,
-    fk_mail,
-    studiengang
+    student.matnr,
+    person.vorname,
+    person.nachname,
+    student.fk_mail
 FROM
-    kurs_mit_studenten
+    student
+JOIN student_in_kurs on student_in_kurs.fk_matnr = student.matnr
+JOIN person ON person.mail = student.fk_mail
 WHERE
     fk_kurs = 4;
 
 
 
 ##Student (nur er selbst), Dozent: Welche Leistungen hat Student XY bisher erbracht?
-##TODO View anpassen Corentin
+##TODO View anpassen Corentin (done)
 SELECT
-    wert,
-    frist_verlaengerung_tage,
-    frist,
-    fk_leistungstyp
+    leistung.wert,
+    leistung.abgabe_ist,
+    leistung.frist_verlaengerung_tage,
+    leistung_template.fk_leistungstyp
 FROM
-    leistung_mit_kurs
+    leistung
+JOIN abgabe_in_kurs on abgabe_in_kurs.id = leistung.fk_abgabe_in_kurs
+Join leistung_template on abgabe_in_kurs.fk_leistung_template = leistung_template.id
 WHERE
-    fk_matnr = 123456 AND fk_kurs = 1;
+    leistung.fk_matnr = 123456 AND abgabe_in_kurs.fk_kurs = 1;
 
 
 
