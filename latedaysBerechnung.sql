@@ -1,4 +1,5 @@
-USE performacetrackerhwr;
+USE performancetracker;
+-- für Steini ^^
 
 -- Wird weiter unten benutzt und in der Prozedur resettet.
 -- Aufruf nur der View resettet die Variable nicht und führt
@@ -66,22 +67,40 @@ GROUP BY fk_leistungstyp, fk_matnr, fk_kurs;
 -- Entscheidung für Backendübergabe und wichtig: Reset der globalen Variable latedaysused
 DELIMITER //
 DROP PROCEDURE IF EXISTS berechne_latedays //
-CREATE PROCEDURE berechne_latedays (p_course_id INT, p_mat_nr INT)
+CREATE PROCEDURE berechne_latedays (p_course_id INT, p_mat_nr INT, aggregate_leistungstyp bool)
     BEGIN
         SET @latedaysUsed = 0;
-        IF p_course_id = -1 AND p_mat_nr = -1 THEN
-            SELECT * FROM berechnete_latedays;
-        ELSEIF p_course_id = -1 THEN
-            SELECT * FROM berechnete_latedays WHERE fk_matnr = p_mat_nr;
-        ELSEIF p_mat_nr = -1 THEN
-            SELECT * FROM berechnete_latedays WHERE fk_kurs = p_course_id;
+        IF aggregate_leistungstyp THEN
+            IF p_course_id = -1 AND p_mat_nr = -1 THEN
+                SELECT SUM(latedays_verrechnet) FROM berechnete_latedays;
+            ELSEIF p_course_id = -1 THEN
+                SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_matnr = p_mat_nr;
+            ELSEIF p_mat_nr = -1 THEN
+                SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id;
+            ELSE
+                SELECT SUM(latedays_verrechnet) FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
+            END IF;
         ELSE
-            SELECT * FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
+            IF p_course_id = -1 AND p_mat_nr = -1 THEN
+                SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays;
+            ELSEIF p_course_id = -1 THEN
+                SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays WHERE fk_matnr = p_mat_nr;
+            ELSEIF p_mat_nr = -1 THEN
+                SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays WHERE fk_kurs = p_course_id;
+            ELSE
+                SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
+            END IF;
         END IF;
     END //
 DELIMITER ;
 
-call berechne_latedays(-1, -1);     -- alle Kurse, alle Studenten
-call berechne_latedays(1, -1);      -- Kurs 1, alle Studenten
-call berechne_latedays(-1, 123456); -- alle Kurse, Student 123456
-call berechne_latedays(1, 123456);  -- Kurs 1, Student 123456
+call berechne_latedays(-1, -1, false);     -- alle Kurse, alle Studenten, latedays zusammengefasst
+call berechne_latedays(1, -1, false);      -- Kurs 1, alle Studenten, latedays zusammengefasst
+call berechne_latedays(-1, 123456, false); -- alle Kurse, Student 123456, latedays zusammengefasst
+call berechne_latedays(1, 123456, false);  -- Kurs 1, Student 123456, latedays zusammengefasst
+
+-- wie oben aber einzelne ausgabe
+call berechne_latedays(-1, -1, true);
+call berechne_latedays(1, -1, true);
+call berechne_latedays(-1, 123456, true);
+call berechne_latedays(1, 123456, true);
