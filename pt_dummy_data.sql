@@ -166,18 +166,18 @@ VALUES
     ('grd', 'Lese- Schreib- und Löschrecht alle Nutzerdaten (global --> Superadmin)'),
     ('kwd', 'Schreib- und Löschrecht eigene Kursdaten (aller Teilnehmer --> Studentadmin)');
 
-INSERT INTO kurs (beschreibung, fk_jahrgang, fk_kurs_buchstabe, fk_modul, latedays_verfuegbar)
+INSERT INTO kurs (beschreibung, fk_jahrgang, fk_kurs_buchstabe, fk_modul, modul_gewichtung, latedays_verfuegbar)
 VALUES
-    ('Einführung DB', 3, 'C', 2, 0),
-    ('Einführung BWL', 3, 'C', 1, 0),
-    ('Einführung OOP', 3, 'C', 3, 6),
-    ('Einführung OOP', 4, 'A', 3, 3),
-    ('Softwarearchitektur', 3, 'C', 3, 6), 
-    ('Mathematik für Ingenieure', 3, 'C', 6, 0),
-    ('Einführung in die theoretische Regelungstechnik', 1, 'C', 7, 9),
-    ('Einführung in die praktische Regelungstechnik', 1, 'C', 7, 5),
-    ('Einführung in die theoretische Halbleitertechnik', 1, 'C', 8, 6);
-    ('Einführung in die praktische Halbleitertechnik', 1, 'C', 8, 4);
+    ('Einführung DB', 3, 'C', 2, 1, 0),
+    ('Einführung BWL', 3, 'C', 1, 1, 0),
+    ('Einführung OOP', 3, 'C', 3, 1, 6),
+    ('Einführung OOP', 4, 'A', 3, 1, 3),
+    ('Softwarearchitektur', 3, 'C', 3, 1, 6), 
+    ('Mathematik für Ingenieure', 3, 'C', 6, 1, 0),
+    ('theoretische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 9),
+    ('praktische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 5),
+    ('theoretische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 6);
+    ('praktische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 4);
 
 INSERT INTO student_in_kurs (fk_kurs, fk_matnr, fk_zugriffsrechte)
 VALUES
