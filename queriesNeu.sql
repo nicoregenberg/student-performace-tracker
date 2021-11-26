@@ -28,3 +28,5 @@ JOIN aktive_mitarbeit am on am.id = ak.fk_aktive_mitarbeit
 JOIN student s on ak.fk_matnr = s.matnr
 JOIN person p on s.fk_mail = p.mail
 ORDER BY zeitpunkt;
+
+SELECT  * FROM aktive_mitarbeit_von_studenten;
