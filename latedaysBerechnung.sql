@@ -67,17 +67,17 @@ GROUP BY fk_leistungstyp, fk_matnr, fk_kurs;
 -- Entscheidung für Backendübergabe und wichtig: Reset der globalen Variable latedaysused
 DELIMITER //
 DROP PROCEDURE IF EXISTS berechne_latedays //
-CREATE PROCEDURE berechne_latedays (p_course_id INT, p_mat_nr INT)
+CREATE PROCEDURE berechne_latedays (IN p_course_id INT, IN p_mat_nr INT)
     BEGIN
         SET @latedaysUsed = 0;
         IF p_course_id = -1 AND p_mat_nr = -1 THEN
-            SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays;
+            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays;
         ELSEIF p_course_id = -1 THEN
-            SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays WHERE fk_matnr = p_mat_nr;
+            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays WHERE fk_matnr = p_mat_nr;
         ELSEIF p_mat_nr = -1 THEN
-            SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays WHERE fk_kurs = p_course_id;
+            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays WHERE fk_kurs = p_course_id;
         ELSE
-            SELECT latedays_verrechnet, fk_leistungstyp FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
+            SELECT fk_matnr as matnr, fk_kurs as courseid, latedays_verrechnet AS value, fk_leistungstyp AS worktype FROM berechnete_latedays WHERE fk_kurs = p_course_id AND fk_matnr = p_mat_nr;
         END IF;
     END //
 DELIMITER ;
@@ -105,6 +105,3 @@ call berechne_latedays(-1, -1);     -- alle Kurse, alle Studenten, latedays zusa
 call berechne_latedays(1, -1);      -- Kurs 1, alle Studenten, latedays zusammengefasst
 call berechne_latedays(-1, 123456); -- alle Kurse, Student 123456, latedays zusammengefasst
 call berechne_latedays(1, 123456);  -- Kurs 1, Student 123456, latedays zusammengefasst
-
-SELECT * FROM kurs
-WHERE latedays_verfuegbar > berechne_latedays_aggregiert(1, 123456);
