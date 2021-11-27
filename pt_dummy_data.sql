@@ -1,4 +1,4 @@
-USE performancetrackerhwr;
+USE performancetracker;
 
 INSERT INTO kurs_buchstabe (wert)
 VALUES
@@ -229,20 +229,20 @@ VALUES
 
 INSERT INTO kurs (beschreibung, fk_jahrgang, fk_kurs_buchstabe, fk_modul, modul_gewichtung, latedays_verfuegbar)
 VALUES
-#Etechnik kurse jahrgang C
+	#Etechnik kurse jahrgang C
     ('Mathematik für Ingenieure', 3, 'C', 6, 1, 0),
     ('theoretische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 9),
     ('praktische Einführung in die Regelungstechnik', 1, 'C', 7, 0.5, 5),
     ('theoretische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 6),
     ('praktische Einführung in die Halbleitertechnik', 1, 'C', 8, 0.5, 4),
 	# WI jahrgang 3 kurs c
-    ('Volkswirtschaftslehre 2', 3, 'C', 1, 0),
+    ('Volkswirtschaftslehre 2', 3, 'C', 1, 1, 0),
     ('Einführung DB', 3, 'C', 2, 1, 6),
     ('Einführung OOP', 3, 'C', 3, 0.5, 6),
     ('Softwarearchitektur', 3, 'C', 3, 0.5, 6),
     ('Einführung BWL', 3, 'C', 4, 1, 0),
     # WI jahrgang 4 kurs A
-    ('Volkswirtschaftslehre 2', 4, 'A', 1, 0),
+    ('Volkswirtschaftslehre 2', 4, 'A', 1, 1, 0),
     ('Einführung DB', 4, 'A', 2, 1, 6),
     ('Einführung OOP', 4, 'A', 3, 0.5, 3),
     ('Softwarearchitektur', 4, 'A', 3, 0.5, 6),
@@ -364,14 +364,14 @@ INSERT INTO abgabe_in_kurs (frist, fk_leistung_template, fk_kurs, teamarbeit_max
 VALUES
 
     ##Etechnik
-	(STR_TO_DATE('32.12.21','%d.%m.%y'), 7, 7, 0),  # Mathe Klausur
-    (STR_TO_DATE('01.01.22','%d.%m.%y'), 11, 9, 4), # prakt. Regelungstechnik Projektarbeit
+	(STR_TO_DATE('23.12.21','%d.%m.%y'), 7, 1, 0),  # Mathe Klausur
+    (STR_TO_DATE('01.01.22','%d.%m.%y'), 11, 3, 4), # prakt. Regelungstechnik Projektarbeit
     #WI Kurs C
 	(STR_TO_DATE('10.12.21 16:00','%d.%m.%y %H:%i'), 7, 6, 0), #Vwl2 klausur
     (STR_TO_DATE('13.12.21','%d.%m.%y'), 4, 7, 5), #Einführung DB Projektarbeit
     (STR_TO_DATE('20.12.21','%d.%m.%y'), 6, 7, 0), #Einführung DB Quiz1
     (STR_TO_DATE('21.12.21','%d.%m.%y'), 6, 7, 0), #Einführung DB Quiz2
-    (STR_TO_DATE('22.12.21','%d.%m.%y'), 1, 7, 0), #Einführung DB Klausur
+    (STR_TO_DATE('22.12.21','%d.%m.%y'), 1, 7, 5), #Einführung DB Klausur
     #WI Kurs A
     (STR_TO_DATE('10.12.21 16:00','%d.%m.%y %H:%i'), 7, 11, 0), # VWL2 Klausur
     (STR_TO_DATE('13.12.21','%d.%m.%y'), 4, 12, 5), #Einführung DB Projektarbeit
@@ -554,34 +554,34 @@ VALUES
     (511140, 2.0, 4, STR_TO_DATE('12.12.21 23:53','%d.%m.%y %H:%i'), 0, 7, false),
     
    #Einführung DB Projektarbeit A 
-    (511141, 2.7, 12, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
-    (511142, 2.7, 12, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
-    (511143, 2.7, 12, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
-    (511144, 2.7, 12, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
-    (511145, 2.7, 12, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
+    (511141, 2.7, 9, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
+    (511142, 2.7, 9, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
+    (511143, 2.7, 9, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
+    (511144, 2.7, 9, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
+    (511145, 2.7, 9, STR_TO_DATE('15.12.21 23:55','%d.%m.%y %H:%i'), 0, 8, false),
    
-    (511146, 3.7, 12, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
-    (511147, 3.7, 12, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
-    (511148, 3.7, 12, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
-    (511149, 3.7, 12, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
-    (511150, 3.7, 12, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
+    (511146, 3.7, 9, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
+    (511147, 3.7, 9, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
+    (511148, 3.7, 9, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
+    (511149, 3.7, 9, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
+    (511150, 3.7, 9, STR_TO_DATE('12.12.21 22:59','%d.%m.%y %H:%i'), 0, 9, false),
 	
-    (511151, 1.0, 12, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
-    (511152, 1.0, 12, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
-    (511153, 1.0, 12, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
-    (511154, 1.0, 12, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
-    (511155, 1.0, 12, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (511151, 1.0, 9, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (511152, 1.0, 9, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (511153, 1.0, 9, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (511154, 1.0, 9, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
+    (511155, 1.0, 9, STR_TO_DATE('12.12.21 21:59','%d.%m.%y %H:%i'), 0, 10, false),
     
  # Einführung in die BWL Klausur
-    (611156, 1.0, 12, STR_TO_DATE('19.12.21 11:59','%d.%m.%y %H:%i'), 1, null, false),
-    (611157, 2.0, 12, STR_TO_DATE('18.12.21 11:58','%d.%m.%y %H:%i'), 0, null, false),
-    (611158, 2.7, 12, STR_TO_DATE('18.12.21 11:57','%d.%m.%y %H:%i'), 0, null, false),
-    (611159, 1.3, 12, STR_TO_DATE('18.12.21 11:55','%d.%m.%y %H:%i'), 0, null, false),
-    (611160, 3.3, 12, STR_TO_DATE('18.12.21 11:53','%d.%m.%y %H:%i'), 0, null, false),
-    (611161, 3.0, 12, STR_TO_DATE('18.12.21 11:59','%d.%m.%y %H:%i'), 0, null, false),
-    (611162, 1.3, 12, STR_TO_DATE('18.12.21 11:55','%d.%m.%y %H:%i'), 0, null, false),
-    (611163, 1.0, 12, STR_TO_DATE('18.12.21 11:50','%d.%m.%y %H:%i'), 0, null, false),
-    (611164, 1.7, 12, STR_TO_DATE('18.12.21 11:59','%d.%m.%y %H:%i'), 0, null, false);
+    (611156, 1.0, 13, STR_TO_DATE('19.12.21 11:59','%d.%m.%y %H:%i'), 1, null, false),
+    (611157, 2.0, 13, STR_TO_DATE('18.12.21 11:58','%d.%m.%y %H:%i'), 0, null, false),
+    (611158, 2.7, 13, STR_TO_DATE('18.12.21 11:57','%d.%m.%y %H:%i'), 0, null, false),
+    (611159, 1.3, 13, STR_TO_DATE('18.12.21 11:55','%d.%m.%y %H:%i'), 0, null, false),
+    (611160, 3.3, 13, STR_TO_DATE('18.12.21 11:53','%d.%m.%y %H:%i'), 0, null, false),
+    (611161, 3.0, 13, STR_TO_DATE('18.12.21 11:59','%d.%m.%y %H:%i'), 0, null, false),
+    (611162, 1.3, 13, STR_TO_DATE('18.12.21 11:55','%d.%m.%y %H:%i'), 0, null, false),
+    (611163, 1.0, 13, STR_TO_DATE('18.12.21 11:50','%d.%m.%y %H:%i'), 0, null, false),
+    (611164, 1.7, 13, STR_TO_DATE('18.12.21 11:59','%d.%m.%y %H:%i'), 0, null, false);
     
   
 INSERT INTO `account` (`fk_mail`, `password_hash`) VALUES
