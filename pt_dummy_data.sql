@@ -14,7 +14,7 @@ INSERT INTO fachrichtung (bezeichnung)
 VALUES
     ('WI'), ('Etechnik'), ('BWL');
 
-INSERT INTO modul (id, fk_fachrichtung, modulnummer, beschreibung)
+INSERT INTO modul (fk_fachrichtung, modulnummer, beschreibung)
 VALUES
     ('WI', 103, 'VWL2'),
     ('WI', 602, 'Datenbanken'),
