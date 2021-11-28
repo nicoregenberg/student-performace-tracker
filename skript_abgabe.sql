@@ -27,10 +27,9 @@
 -----------------------------------------------------------------
 */
 
-USE performacetrackerhwr;
-DROP DATABASE IF EXISTS performacetrackerhwr;
-CREATE DATABASE IF NOT EXISTS performacetrackerhwr;
-USE performacetrackerhwr;
+DROP DATABASE IF EXISTS performancetrackerhwr;
+CREATE DATABASE IF NOT EXISTS performancetrackerhwr;
+USE performancetrackerhwr;
 
 /*
 --------------------------------------------------
