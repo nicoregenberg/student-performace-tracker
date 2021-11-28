@@ -83,7 +83,6 @@ DESC;
 
 
 ## Latedays anzeigen
-call berechne_latedays(1, 123456);
 
 
 
@@ -434,13 +433,17 @@ WHERE
 
 
 ##Student, Dozent: Welche aktiven Mitarbeiten hat Student XY in einem Kurs erbracht?
+DROP VIEW aktive_mitarbeit_von_studenten;
 CREATE VIEW aktive_mitarbeit_von_studenten AS
-    SELECT fk_kurs, fk_matnr, vorname, nachname, bezeichnung, zeitpunkt
+    SELECT fk_kurs, fk_matnr as matnr, vorname, nachname, bezeichnung, zeitpunkt, nachweis
 FROM aktive_mitarbeit_in_kurs ak
 JOIN aktive_mitarbeit am on am.id = ak.fk_aktive_mitarbeit
 JOIN student s on ak.fk_matnr = s.matnr
 JOIN person p on s.fk_mail = p.mail
 ORDER BY zeitpunkt;
+
+SELECT vorname, nachname, nachweis, bezeichnung, zeitpunkt FROM aktive_mitarbeit_von_studenten
+WHERE matnr = 123456 AND fk_kurs = 1;
 
 
 

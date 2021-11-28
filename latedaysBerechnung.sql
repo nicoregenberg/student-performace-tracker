@@ -120,3 +120,7 @@ SELECT calc_latedays_left_total(VerbrauchteLD, latedays_verfuegbar) as latedaysu
 JOIN abgabe_in_kurs ak ON ak.id = lo.abgabe_id
 WHERE fk_team = 1 AND kurs_id = 1) l;
 
+SELECT calc_latedays_left_total(VerbrauchteLD, latedays_verfuegbar) as latedaysuebrig, ak.frist
+    FROM latedays_merged_overvies lo
+JOIN abgabe_in_kurs ak ON ak.id = lo.abgabe_id
+WHERE fk_team = 1 AND kurs_id = 1;
