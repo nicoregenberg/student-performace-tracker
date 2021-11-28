@@ -1,5 +1,6 @@
 /*
---------------------------------------------------
+-----------------------------------------------------------------
+-----------------------------------------------------------------
     Skript zur Erstellung der Datenbank Performancetracker
     im Kurs Datenbanken im Kurs WI 20 C bei Herrn Fischer
 
@@ -8,11 +9,22 @@
     Corentin Hamp, Danny Neupauer, Hannes Roever
 
     Gliederung:
-      1-100     Schema
-    100-300     Trigger
-    usw.
+    ------------------------------------------------
+    | Zeilen      |   Inhalt                        |
+    ------------------------------------------------
+    |   24 - 262  |   Schema                        |
+    |  262 - 391  |   Prozeduren & Funktionen       |
+    |  391 - 504  |   Views                         |
+    |  504 - 582  |   Trigger                       |
+    |  582 -1505  |   Dummy Data                    |
+    | 1505 -1709  |   Exemplarischer Aufruf Queries |
+    -------------------------------------------------
 
---------------------------------------------------
+    Repo:
+    https://github.com/HansenBerlin/student-performace-tracker
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
 */
 
 USE performacetrackerhwr;
@@ -26,7 +38,6 @@ USE performacetrackerhwr;
 --------------------------------------------------
 */
 
-DROP TABLE IF EXISTS aktive_mitarbeit;
 CREATE TABLE aktive_mitarbeit
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -177,7 +188,7 @@ CREATE TABLE leistung
 CREATE TABLE account
 (
     fk_mail       CHAR(50)  NOT NULL,
-    password_hash CHAR(255) NOT NULL,
+    session_token CHAR(255) NOT NULL,
     CONSTRAINT account_person_mail_fk
         FOREIGN KEY (fk_mail) REFERENCES person (mail)
 );
@@ -279,6 +290,7 @@ BEGIN
     RETURN days_diff;
 END //
 
+
 DROP FUNCTION IF EXISTS calc_penalty_on_leistung //
 CREATE FUNCTION calc_penalty_on_leistung(diff INT, latedays_leistung INT)
     RETURNS INT
@@ -290,6 +302,7 @@ BEGIN
         RETURN 0;
     END IF;
 END //
+
 
 DROP FUNCTION IF EXISTS calc_latedays_used //
 CREATE FUNCTION calc_latedays_used(diff INT, latedays_leistung INT)
@@ -303,6 +316,7 @@ BEGIN
     END IF;
 END //
 
+
 DROP FUNCTION IF EXISTS calc_latedays_left_total //
 CREATE FUNCTION calc_latedays_left_total(ld_used INT, ld_available INT)
     RETURNS INT
@@ -315,6 +329,7 @@ BEGIN
     END IF;
 END //
 
+
 DROP FUNCTION IF EXISTS sum_latedays_and_penalty //
 CREATE FUNCTION sum_latedays_and_penalty(ld_used INT, ld_available INT, penalty INT)
     RETURNS INT
@@ -326,6 +341,7 @@ BEGIN
         RETURN penalty;
     END IF;
 END //
+
 
 -- Strafe auf Note inkl aller Variablen
 DROP FUNCTION IF EXISTS calc_penalty_on_course_grade //
@@ -371,6 +387,7 @@ BEGIN
     INSERT INTO aktive_mitarbeit_in_kurs(fk_matnr, fk_kurs, fk_aktive_mitarbeit)
     VALUES (matrikelnummer, kurs_id, LAST_INSERT_ID());
 END //
+
 
 ## Beitrittsanfrage für einen Kurs annehmen
 DROP PROCEDURE IF EXISTS accept_pending_request //
@@ -460,8 +477,7 @@ CREATE VIEW Kursnote AS SELECT DISTINCT
     fk_kurs, fk_matnr, kurs.fk_modul, kurs.modul_gewichtung, FORMAT(
         Kursnote -(1 / 15) * (IFNULL(student_in_kurs.aktive_mitarbeit_bonus, 0) + (
                 IF(calc_penalty_on_course_grade(fk_kurs, fk_matnr)
-                       >= 0, 0, calc_penalty_on_course_grade(fk_kurs, fk_matnr)))), 1
-) AS Kursnote
+                       >= 0, 0, calc_penalty_on_course_grade(fk_kurs, fk_matnr)))), 1) AS Kursnote
 FROM (SELECT fk_kurs, fk_matnr, (FORMAT((SUM(NoteGewichtet)), 2)) AS Kursnote
     FROM (
         SELECT fk_kurs, fk_matnr, (Note * (gewichtung / get_leistungstypen_gewicht(
@@ -484,6 +500,15 @@ CREATE VIEW Modulnote AS
     FROM Kursnote
     JOIN kurs ON kurs.id = Kursnote.fk_kurs) AS def
     GROUP BY fk_modul, fk_matnr;
+
+
+DROP VIEW IF EXISTS persons_overview;
+CREATE VIEW persons_overview AS
+    SELECT CONCAT(vorname, ' ', nachname) AS fullname, mail, NULL AS matnr FROM person p
+    INNER JOIN dozent d ON p.mail = d.fk_person
+UNION
+    SELECT CONCAT(vorname, ' ', nachname) AS fullname, mail, matnr FROM person p
+    INNER JOIN student s ON p.mail = s.fk_mail;
 
 
 /*
@@ -550,6 +575,7 @@ BEGIN
                 'Fehler: Die Abgabe in Kurs wurde bereits für den Studenten eingetragen)';
     END IF;
 END //
+
 
 DROP TRIGGER IF EXISTS check_person_is_from_hwr_before_insert_on_person;
 CREATE TRIGGER check_person_is_from_hwr_before_insert_on_person
@@ -1385,7 +1411,7 @@ VALUES
     (611164, 1.7, 13, STR_TO_DATE('18.12.21 11:59', '%d.%m.%y %H:%i'), 0, NULL, FALSE);
 
 
-INSERT INTO account (fk_mail, password_hash)
+INSERT INTO account (fk_mail, session_token)
 VALUES
     #Dozenten
     ('doz.bugs.bunny@doz.hwr-berlin.de', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
@@ -1486,13 +1512,41 @@ VALUES
     (15, 511153),
     (15, 511154),
     (15, 511155);
-
-
 /*
 --------------------------------------------------
     ABFRAGEN
 --------------------------------------------------
 */
+
+-- Anzeige von Abgaben für in einem Kurs noch keine Einreichungen vorliegen, mit Frist
+SELECT frist, fk_leistungstyp FROM abgabe_in_kurs a
+INNER JOIN leistung_template lt
+    ON a.fk_leistung_template = lt.id
+WHERE a.id NOT IN (
+    SELECT fk_abgabe_in_kurs
+    FROM leistung)
+  AND fk_kurs = 7 AND a.frist < '2021-12-31';
+
+
+-- Anzeige noch nicht erbrachter Leistungen für Student in Kurs
+SELECT frist, fk_leistungstyp FROM abgabe_in_kurs a
+INNER JOIN leistung_template lt
+    ON a.fk_leistung_template = lt.id
+WHERE a.id NOT IN (
+    SELECT fk_abgabe_in_kurs
+    FROM leistung
+    WHERE fk_matnr = 511127)
+  AND fk_kurs = 7;
+
+
+-- Abgabe von Student in Kurs mit Berechnung der Differenz früher oder später Abgaben
+SELECT l.wert, lt.fk_leistungstyp, aik.frist, l.abgabe_ist,
+       round_days_diff(aik.frist, l.abgabe_ist) as abgabe_differenz
+FROM leistung l
+JOIN abgabe_in_kurs aik on l.fk_abgabe_in_kurs = aik.id
+JOIN leistung_template lt on aik.fk_leistung_template = lt.id
+WHERE fk_matnr = 711110 AND fk_kurs = 3;
+
 
 -- Abruf Abgabe mit Frist und noch min verfügbaren Latedays in Team
 -- inkl Berechnung von Härtefällen, Kurslatedays und Leistungslatedays
@@ -1509,66 +1563,13 @@ FROM (
 SELECT calc_penalty_on_course_grade(1, 711110);
 
 
-##Dozent lässt sich alle nicht eingereichten Arbeiten anzeigen = Name und Kategorie
-SELECT DISTINCT abgabe_in_kurs.*
-FROM (
-    SELECT *
-    FROM leistung
-) AS leistung
-    RIGHT JOIN abgabe_in_kurs ON abgabe_in_kurs.id = leistung.fk_abgabe_in_kurs
-WHERE abgabe_in_kurs.fk_kurs = 12
-  AND frist <= '2021-12-10';
-
-
--- Abgabe von Student in Kurs mit Berechnung der Differenz früher oder später Abgaben
-SELECT l.wert, lt.fk_leistungstyp, aik.frist, l.abgabe_ist,
-       round_days_diff(aik.frist, l.abgabe_ist) as abgabe_differenz
-FROM leistung l
-JOIN abgabe_in_kurs aik on l.fk_abgabe_in_kurs = aik.id
-JOIN leistung_template lt on aik.fk_leistung_template = lt.id
-WHERE fk_matnr = 711110 AND fk_kurs = 3;
-
-/*
-SELECT frist, fk_leistungstyp, a.id FROM abgabe_in_kurs a
-INNER JOIN leistung_template lt
-    ON a.fk_leistung_template = lt.id
-WHERE a.id NOT IN (
-    SELECT fk_abgabe_in_kurs
-    FROM leistung) AND a.fk_kurs = 7;
-
-SELECT frist, fk_leistungstyp FROM abgabe_in_kurs a
-    INNER JOIN leistung_template lt ON a.fk_leistung_template = lt.id
-WHERE a.id
-          NOT IN (SELECT fk_abgabe_in_kurs FROM leistung
-WHERE fk_kurs = 7)
-AND fk_kurs = 7;
-
-SELECT frist, fk_leistungstyp, a.id FROM abgabe_in_kurs a
-    INNER JOIN leistung_template lt ON a.fk_leistung_template = lt.id
-WHERE fk_kurs = 7;
-
-SELECT fk_abgabe_in_kurs, fk_matnr FROM leistung WHERE fk_matnr = 511126;
-
-
-SELECT * FROM
-SELECT frist, fk_leistungstyp, a.fk_kurs, l.fk_matnr
-FROM abgabe_in_kurs a
-    JOIN leistung_template lt ON a.fk_leistung_template = lt.id
-LEFT JOIN leistung l ON a.id = l.fk_abgabe_in_kurs
-WHERE fk_kurs = 7
-GROUP BY a.id, fk_matnr;
-
--- 1 Abgabe für Kurs 7 (4)
-SELECT fk_abgabe_in_kurs, fk_matnr FROM leistung WHERE fk_matnr = 511126;
-*/
-
-
-##alle Studenten in Teams
-SELECT DISTINCT fk_matnr, fk_team
-FROM student_in_team
-         JOIN student_in_kurs USING (fk_matnr)
+##alle Studenten in Teams in einem Kurs
+SELECT DISTINCT fk_matnr as matnr, fk_team as teamnummer, po.fullname
+FROM student_in_team sit
+    JOIN student_in_kurs USING (fk_matnr)
+JOIN persons_overview po ON sit.fk_matnr = po.matnr
 WHERE fk_kurs = 1
-ORDER BY student_in_team.fk_team
+ORDER BY sit.fk_team
 DESC;
 
 
@@ -1578,22 +1579,21 @@ SELECT fk_kurs,
 FROM student_in_kurs
          JOIN student ON student_in_kurs.fk_matnr = student.matnr
          JOIN kurs ON kurs.id = student_in_kurs.fk_kurs
-WHERE matnr = 262728
+WHERE matnr = 711110
   AND fk_zugriffsrechte = 'kwd';
 
 
 ##Dozent lässt sich alle E-Mail-Adressen eines Kurses im Jahrgang anzeigen
-SELECT fk_kurs,
-    fk_mail
+SELECT fk_kurs as kurs, fk_mail as mailadresse
 FROM student_in_kurs
          JOIN student ON student_in_kurs.fk_matnr = student.matnr
          JOIN kurs ON kurs.id = student_in_kurs.fk_kurs
 WHERE fk_jahrgang = 3
-  AND fk_kurs = 2;
+  AND fk_kurs = 8;
 
 
 ##Dozent lässt sich Studenten mit Aktiver Mitarbeit anzeigen
-## in eigenen Kursen anzeigen mit ANzahl der MA (absteigend)
+## in eigenen Kursen anzeigen mit Anzahl der MA (absteigend)
 SELECT DISTINCT fk_matnr, vorname, nachname, kurs.id, COUNT(fk_aktive_mitarbeit) AS anzahl_mitarbeiten
 FROM aktive_mitarbeit_in_kurs a
          JOIN kurs ON kurs.id = a.fk_kurs
@@ -1612,12 +1612,12 @@ WHERE matnr = 511142 AND fk_kurs = 12;
 
 
 ##Dozent lässt sich alle Teams anzeigen, in denen ein bestimmter Student war
-SELECT matnr, vorname, nachname, team.id, max_mitglieder, kommentar
+SELECT matnr, vorname, nachname, team.id as team_id, max_mitglieder, kommentar
 FROM student_in_team
          JOIN team ON student_in_team.fk_team = team.id
          JOIN student ON student.matnr = student_in_team.fk_matnr
          JOIN person ON person.mail = student.fk_mail
-WHERE matnr = 123456;
+WHERE matnr = 511142;
 
 
 ##Dozent lässt sich alle Kategorien und deren Gewichtung anzeigen (absteigend)
@@ -1628,18 +1628,18 @@ DESC;
 
 
 ##Dozent lässt sich alle Studenten offene Anfrage für ein Modul anzeigen
-SELECT student.matnr, person.vorname, person.nachname
+SELECT student.matnr, person.vorname, person.nachname, person.mail
 FROM student
          JOIN person ON person.mail = student.fk_mail
          LEFT JOIN anfrageaufnahme ON student.matnr = anfrageaufnahme.fk_matnr
-WHERE anfrageaufnahme.fk_kurs = 6;
+WHERE anfrageaufnahme.fk_kurs = 4;
 
 
 ##Student lässt sich offene Anfragen für Module anzeigen
 SELECT kursname_voll.vollname
 FROM anfrageaufnahme
          JOIN kursname_voll ON kursname_voll.fk_kurs_id = anfrageaufnahme.fk_kurs
-WHERE anfrageaufnahme.fk_matnr = 123456;
+WHERE anfrageaufnahme.fk_matnr = 711123;
 
 
 ##Student (nur eigener Kurs), Dozent: Welche Studenten sind in Kurs XY?
@@ -1655,7 +1655,7 @@ SELECT leistung.wert, leistung.abgabe_ist, leistung.frist_verlaengerung_tage, le
 FROM leistung
          JOIN abgabe_in_kurs ON abgabe_in_kurs.id = leistung.fk_abgabe_in_kurs
          JOIN leistung_template ON abgabe_in_kurs.fk_leistung_template = leistung_template.id
-WHERE leistung.fk_matnr = 123456
+WHERE leistung.fk_matnr = 711123
   AND abgabe_in_kurs.fk_kurs = 1;
 
 
@@ -1693,16 +1693,20 @@ SET max_mitglieder = '3',
     kommentar      = 'super Team'
 WHERE id = 1;
 
+
 DELETE
 FROM team
 WHERE id = 1;
 
+
 ##neuen Leistungstyp eintragen
 INSERT INTO leistungstyp (bezeichnung) VALUES ('Hausarbeit');
+
 
 ##update, insert (Dozent): Leistungstemplate
 INSERT INTO leistung_template(fk_leistungstyp, latedays, gewichtung,  teiler)
 VALUES ('Hausarbeit', '14', '1', '1');
+
 
 UPDATE leistung_template
 SET fk_leistungstyp = 'Projektarbeit',
@@ -1715,4 +1719,3 @@ WHERE id = 1;
 ## Beitrittsanfrage für einen Kurs stellen
 INSERT INTO anfrageaufnahme (fk_kurs, fk_matnr)
 VALUES ('4', '711110');
-
